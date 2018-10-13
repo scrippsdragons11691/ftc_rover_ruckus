@@ -4,27 +4,29 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class Auton extends LinearOpMode{
+public class Auton extends LinearOpMode {
 
-    ElevatorClimb elevatorClimb;
-    Intake intake;
-    Sampler sampler;
+    HardwarePlatter theHardwarePlatter;
+    ElevatorClimb theElevatorClimb;
+    Intake theIntake;
+    Sampler theSampler;
     ChassisAuton theChassis;
 
-    Auton(HardwarePlatter hwPlatter) {
-        intake = new Intake(hwPlatter);
-        sampler = new Sampler(hwPlatter);
-        elevatorClimb = new ElevatorClimb(hwPlatter);
-        theChassis = new ChassisAuton(hwPlatter);
+    public Auton() {
+        theHardwarePlatter = new HardwarePlatter(hardwareMap);
+        theIntake = new Intake(theHardwarePlatter);
+        theSampler = new Sampler(theHardwarePlatter);
+        theElevatorClimb = new ElevatorClimb(theHardwarePlatter);
+        theChassis = new ChassisAuton(theHardwarePlatter);
     }
 
-    public void runOpMode(){
-        elevatorClimb.dropDown();
-        intake.unfold();
+    public void runOpMode() {
+        theElevatorClimb.dropDown();
+        theIntake.unfold();
         theChassis.driveAuton(10);
-        sampler.sampleMinerals();
-        intake.pickUp();
-        intake.release();
+        theSampler.sampleMinerals();
+        theIntake.pickUp();
+        theIntake.release();
     }
 
 }
