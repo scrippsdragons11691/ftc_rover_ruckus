@@ -33,9 +33,11 @@ public class HardwarePlatter {
         armPotentiometer = (AnalogInput)hMap.get("potentiometer");
         leftBackDrive = (DcMotor)hMap.get("left_back_drive");
         rightBackDrive = (DcMotor)hMap.get("right_back_drive");
-        //elevatorClimb = (DcMotor)hwPlatter.get("elevator_climb");
-        //combineDrive = (DcMotor)hwPlatter.get("combine_drive");
-        //clawServo = (Servo)hwPlatter.get("claw_servo");
+        armDrive = (DcMotor)hMap.get("arm_drive");
+        dumpServo = (Servo)hMap.get("dump_servo");
+        //elevatorClimb = (DcMotor)hMap.get("elevator_climb");
+        combineDrive = (DcMotor)hMap.get("combine_drive");
+        //clawServo = (Servo)hMap.get("claw_servo");
         imu          = hMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;

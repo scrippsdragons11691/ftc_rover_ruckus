@@ -7,12 +7,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class Teleop extends LinearOpMode {
     Chassis theChassis;
     public HardwarePlatter hwPlatter;
-
+    Intake intake;
     public void runOpMode() {
         hwPlatter = new HardwarePlatter(hardwareMap);
         theChassis = new Chassis(hwPlatter);
+        intake    = new Intake(hwPlatter);
         telemetry.addData("robot", "initialized");
         telemetry.update();
+        
+        hwPlatter.dumpServo.setPosition(0.0);
 
         waitForStart();
 
@@ -23,6 +26,26 @@ public class Teleop extends LinearOpMode {
             theChassis.drive(speed,turn);
 
             theChassis.driveCombine(gamepad1.a, gamepad1.b);
-        }
+            if(gamepad1.y){
+                intake.backward();
+            } else if(gamepad1.x) {
+                intake.forward();
+            } else {
+                intake.stop();
+            }
+            double dumpServoPos = hwPlatter.dumpServo.getPosition();
+            double newDumpServoPos = dumpServoPos;
+            if(gamepad1.left_bumper) {
+                newDumpServoPos += 0.2;
+            } else if(gamepad1.right_bumper) {
+                newDumpServoPos -= 0.2;
+            } else {
+                newDumpServoPos = 0;
+            }
+            hwPlatter.dumpServo.setPosition(newDumpServoPos);
+            telemetry.addData("dump servo", hwPlatter.dumpServo.getPosition());
+            intake.display(telemetry);
+            telemetry.update();
+        }   
     }
 }
