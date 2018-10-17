@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.Hardware;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
 public class Chassis {
@@ -32,13 +30,5 @@ public class Chassis {
         theHardwarePlatter.rightBackDrive.setPower(rightBackPower);
     }
     
-    public void driveCombine(boolean forward, boolean backward) {
-        if(forward) {
-            theHardwarePlatter.combineDrive.setPower(1.0);
-        } else if(backward) {
-            theHardwarePlatter.combineDrive.setPower(-1.0);
-        } else {
-            theHardwarePlatter.combineDrive.setPower(0);
-        }
-    }
+
 }
