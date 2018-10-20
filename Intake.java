@@ -8,7 +8,7 @@ public class Intake {
 
     public Intake(HardwarePlatter hwPlatter) {
         theHardwarePlatter = hwPlatter;
-        
+
         theHardwarePlatter.dumpServo.setPosition(0.4);
     }
 
@@ -21,11 +21,12 @@ public class Intake {
             theHardwarePlatter.combineDrive.setPower(0);
         }
     }
-    
+
     void openDumpServo() {
         theHardwarePlatter.dumpServo.setPosition(0);
+
     }
-    
+
     void closeDumpServo() {
         theHardwarePlatter.dumpServo.setPosition(0.4);
     }

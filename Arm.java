@@ -28,9 +28,9 @@ public class Arm {
 
         if(Math.abs(error) > POS_TOLERANCE) {
             is_moving = true;
-            if(error < 0) {
+            if(error < POS_TOLERANCE) {
                 theHardwarePlatter.armDrive.setPower(-INTAKE_DRIVE_SPEED);
-            } else if(error > 0) {
+            } else {
                 theHardwarePlatter.armDrive.setPower(INTAKE_DRIVE_SPEED);
             }
         } else {
@@ -76,6 +76,7 @@ public class Arm {
     private void driveArm() {
         theHardwarePlatter.armDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         theHardwarePlatter.armDrive.setPower(driveSpeedSetPoint);
+        is_moving = false;
     }
 
     void stop() {
@@ -94,10 +95,13 @@ public class Arm {
             stop();
     }
 
+    boolean isMoving() {
+        return(is_moving);
+    }
+
     void display(Telemetry telemetry) {
         telemetry.addData("pot", theHardwarePlatter.armPotentiometer.getVoltage());
     }
 }
-
 
 

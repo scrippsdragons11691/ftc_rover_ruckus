@@ -38,10 +38,10 @@ public class HardwarePlatter {
         elevatorDrive = (DcMotor)hMap.get("elevator_climb");
         combineDrive = (DcMotor)hMap.get("combine_drive");
         clawServo = (Servo)hMap.get("claw_servo");
-        /*imu          = hMap.get(BNO055IMU.class, "imu");
+        imu          = hMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        imu.initialize(parameters);*/
+        imu.initialize(parameters);
     }
 }
