@@ -40,18 +40,22 @@ public class Arm {
 
     void unfold() {
         targetPosition = UNFOLD_POSITION_VOLTS;
+        gotoPosition();
     }
 
     void pickUp() {
         targetPosition = PICKUP_POSITION_VOLTS;
+        gotoPosition();
     }
 
     void drive() {
         targetPosition = DRIVE_POSITION_VOLTS;
+        gotoPosition();
     }
 
     void release() {
         targetPosition = RELEASE_POSITION_VOLTS;
+        gotoPosition();
     }
 
     void backward() {
