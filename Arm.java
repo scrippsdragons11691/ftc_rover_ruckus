@@ -8,10 +8,10 @@ public class Arm {
     static final double INTAKE_DRIVE_SPEED      = 0.1;
     static final double ARM_HOLD_VOLTS          = 0.001;
     static final double POS_TOLERANCE           = 0.1;
-    static final double UNFOLD_POSITION_VOLTS   = 2.2;
-    static final double PICKUP_POSITION_VOLTS   = 1.85;
-    static final double DRIVE_POSITION_VOLTS    = 0.57;
-    static final double RELEASE_POSITION_VOLTS  = 0.32;
+    static final double UNFOLD_POSITION_VOLTS   = 3.3;
+    static final double PICKUP_POSITION_VOLTS   = 3.0;
+    static final double DRIVE_POSITION_VOLTS    = 1.1;
+    static final double RELEASE_POSITION_VOLTS  = 1.1;
 
     HardwarePlatter theHardwarePlatter;
     private double  driveSpeedSetPoint = 0.0;
@@ -61,6 +61,11 @@ public class Arm {
 
     void forward() {
         driveSpeedSetPoint = -INTAKE_DRIVE_SPEED;
+        driveArm();
+    }
+
+    void move(double speed) {
+        driveSpeedSetPoint = Math.pow(speed, 3) * 0.2;
         driveArm();
     }
 

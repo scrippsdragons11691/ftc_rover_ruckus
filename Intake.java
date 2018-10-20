@@ -8,6 +8,8 @@ public class Intake {
 
     public Intake(HardwarePlatter hwPlatter) {
         theHardwarePlatter = hwPlatter;
+        
+        theHardwarePlatter.dumpServo.setPosition(0.4);
     }
 
     public void driveCombine(boolean forward, boolean backward) {
@@ -19,18 +21,13 @@ public class Intake {
             theHardwarePlatter.combineDrive.setPower(0);
         }
     }
+    
     void openDumpServo() {
-        double dumpServoPos = theHardwarePlatter.dumpServo.getPosition();
-        double newDumpServoPos = dumpServoPos;
-        newDumpServoPos += 0.2;
-        theHardwarePlatter.dumpServo.setPosition(newDumpServoPos);
-
+        theHardwarePlatter.dumpServo.setPosition(0);
     }
+    
     void closeDumpServo() {
-        double dumpServoPos = theHardwarePlatter.dumpServo.getPosition();
-        double newDumpServoPos = dumpServoPos;
-        newDumpServoPos -= 0.2;
-        theHardwarePlatter.dumpServo.setPosition(newDumpServoPos);
+        theHardwarePlatter.dumpServo.setPosition(0.4);
     }
 
 }
