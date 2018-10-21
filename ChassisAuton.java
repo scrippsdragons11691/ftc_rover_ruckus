@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -15,29 +14,30 @@ public class ChassisAuton {
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     DRIVE_SPEED             = 0.6;
-    static final double     TURN_SPEED              = 0.5;
+    static final double     TURN_SPEED              = 0.3;
+    static final double     ANGLE_TOLERANCE         = 3;
 
-    private ElapsedTime runtime = new ElapsedTime();
     HardwarePlatter theHardwarePlatter;
     double gyroTarget;
     double headingResetValue;
 
     public ChassisAuton(HardwarePlatter hwPlatter) {
         theHardwarePlatter = hwPlatter;
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        theHardwarePlatter.imu.initialize(parameters);
     }
 
     void driveAuton(double distanceInches) {
 
-        double speed = 1;
-        double leftInches = distanceInches;
-        double rightInches = distanceInches;
-        double timeoutS;
         int newLeftTarget;
         int newRightTarget;
 
         // Determine new target position, and pass to motor controller
-        newLeftTarget = theHardwarePlatter.leftFrontDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-        newRightTarget = theHardwarePlatter.rightFrontDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+        newLeftTarget = theHardwarePlatter.leftFrontDrive.getCurrentPosition() + (int)(distanceInches * COUNTS_PER_INCH);
+        newRightTarget = theHardwarePlatter.rightFrontDrive.getCurrentPosition() + (int)(distanceInches * COUNTS_PER_INCH);
 
         theHardwarePlatter.leftFrontDrive.setTargetPosition(newLeftTarget);
         theHardwarePlatter.rightFrontDrive.setTargetPosition(newRightTarget);
@@ -46,11 +46,14 @@ public class ChassisAuton {
         theHardwarePlatter.leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         theHardwarePlatter.rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        theHardwarePlatter.leftFrontDrive.setPower(Math.abs(DRIVE_SPEED));
+        theHardwarePlatter.rightFrontDrive.setPower(Math.abs(DRIVE_SPEED));
+    }
 
-        // reset the timeout time and start motion.
-        runtime.reset();
-        theHardwarePlatter.leftFrontDrive.setPower(Math.abs(speed));
-        theHardwarePlatter.rightFrontDrive.setPower(Math.abs(speed));
+    public void turn(double angledegrees) {
+        gyroTarget = angledegrees;
+        headingResetValue = getAbsoluteHeading();
+        isGyroBusy();
     }
 
     private double getAbsoluteHeading() {
@@ -63,18 +66,22 @@ public class ChassisAuton {
 
     boolean isGyroBusy() {
         double gyroActual = this.getRelativeHeading();
-        if(gyroActual < gyroTarget) {
-            this.turn(0.1);
-            return true;
-        } else if(gyroActual > gyroTarget) {
-            this.turn(-0.1);
-            return true;
+        double error = gyroTarget - gyroActual;
+        boolean isBusy;
+        if(Math.abs(error) > ANGLE_TOLERANCE) {
+            if (error < 0)
+                this.rotate(TURN_SPEED);
+            else
+                this.rotate(-TURN_SPEED);
+            isBusy = true;
         } else {
-            this.turn(0.0);
-            return false;
+            this.rotate(0.0);
+            isBusy = false;
         }
+        return(isBusy);
     }
-    public boolean isDriveBusy() {
+
+    boolean isDriveBusy() {
         if(!theHardwarePlatter.leftFrontDrive.isBusy() || !theHardwarePlatter.rightFrontDrive.isBusy()) {
             // Stop all motion;
             theHardwarePlatter.leftFrontDrive.setPower(0);
@@ -88,11 +95,7 @@ public class ChassisAuton {
         }
     }
 
-    public void turn(double angledegrees) {
-        gyroTarget = angledegrees;
-        headingResetValue = getAbsoluteHeading();
-    }
-    void rotate(double power) {
+    private void rotate(double power) {
         theHardwarePlatter.leftFrontDrive.setPower(power);
         theHardwarePlatter.rightFrontDrive.setPower(-power);
         theHardwarePlatter.leftBackDrive.setPower(power);

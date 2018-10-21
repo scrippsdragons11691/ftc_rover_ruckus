@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class Auton extends LinearOpMode {
+public class Auton extends OpMode {
 
     HardwarePlatter theHardwarePlatter;
     ElevatorClimb theElevatorClimb;
@@ -15,11 +15,11 @@ public class Auton extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     ClawLatch theClaw;
     Intake intake;
+    int step;
 
     public Auton() {
         theHardwarePlatter = new HardwarePlatter(hardwareMap);
 
-        //theArm = new Arm(theHardwarePlatter);
         theSampler = new Sampler(theHardwarePlatter);
         theElevatorClimb = new ElevatorClimb(theHardwarePlatter);
         theChassis = new ChassisAuton(theHardwarePlatter);
@@ -28,36 +28,30 @@ public class Auton extends LinearOpMode {
         intake = new Intake(theHardwarePlatter);
     }
 
-    public void runOpMode() {
+    public void init() {
         telemetry.addData("Robot", "Initialized");
         telemetry.update();
-
-        waitForStart();
-
-        //theElevatorClimb.dropDown();
-        theChassis.driveAuton(6.5);
-
-        do {
-            theArm.drive();
-        } while(theArm.isMoving() && opModeIsActive());
-
-        theChassis.driveAuton(-6.5);
-
-        do {
-            theArm.unfold();
-        } while(theArm.isMoving() && opModeIsActive());
-
-        intake.openDumpServo();
-
-        do {
-            theArm.pickUp();
-        } while(theArm.isMoving() && opModeIsActive());
-
-        //while(opModeIsActive() && runtime.time() < UNLATCH_TIME) theClaw.open();
-
-        //theSampler.sampleMinerals();
-        //theArm.pickUp();
-        //theArm.release();
+        step = 1;
     }
 
+    public void loop() {
+        if(!theChassis.isDriveBusy() && !theArm.isMoving() && step < 6)
+        {
+            step++;
+            if(step == 1)
+                theElevatorClimb.dropDown();
+            else if(step == 2)
+                theChassis.driveAuton(6.5);
+            else if(step == 3)
+                theArm.drive();
+            else if(step == 4)
+                theChassis.driveAuton(-6.5);
+            else if(step == 5)
+                theArm.unfold();
+            else if(step == 6) {
+                intake.openDumpServo();
+                theArm.pickUp();
+            }
+        }
+    }
 }
