@@ -12,6 +12,7 @@ public class HardwarePlatter {
     public DcMotor rightFrontDrive;
     public DcMotor leftBackDrive;
     public DcMotor rightBackDrive;
+    public DcMotor wheelDrives[] = { leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive };
 
     public DcMotor combineDrive;
 
@@ -39,9 +40,5 @@ public class HardwarePlatter {
         combineDrive = (DcMotor)hMap.get("combine_drive");
         clawServo = (Servo)hMap.get("claw_servo");
         imu          = hMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        imu.initialize(parameters);
     }
 }

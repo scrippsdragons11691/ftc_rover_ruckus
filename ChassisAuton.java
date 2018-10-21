@@ -32,22 +32,18 @@ public class ChassisAuton {
 
     void driveAuton(double distanceInches) {
 
-        int newLeftTarget;
-        int newRightTarget;
+        int newTargetPos;
+        int distanceCounts = (int)(distanceInches * COUNTS_PER_INCH);
 
         // Determine new target position, and pass to motor controller
-        newLeftTarget = theHardwarePlatter.leftFrontDrive.getCurrentPosition() + (int)(distanceInches * COUNTS_PER_INCH);
-        newRightTarget = theHardwarePlatter.rightFrontDrive.getCurrentPosition() + (int)(distanceInches * COUNTS_PER_INCH);
-
-        theHardwarePlatter.leftFrontDrive.setTargetPosition(newLeftTarget);
-        theHardwarePlatter.rightFrontDrive.setTargetPosition(newRightTarget);
-
-        // Turn On RUN_TO_POSITION
-        theHardwarePlatter.leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        theHardwarePlatter.rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        theHardwarePlatter.leftFrontDrive.setPower(Math.abs(DRIVE_SPEED));
-        theHardwarePlatter.rightFrontDrive.setPower(Math.abs(DRIVE_SPEED));
+        for(DcMotor wheelDrive : theHardwarePlatter.wheelDrives) {
+            wheelDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            newTargetPos = wheelDrive.getCurrentPosition() + distanceCounts;
+            wheelDrive.setTargetPosition(newTargetPos);
+            wheelDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        for(DcMotor wheelDrive : theHardwarePlatter.wheelDrives)
+            wheelDrive.setPower(Math.abs(DRIVE_SPEED));
     }
 
     public void turn(double angledegrees) {
@@ -83,12 +79,7 @@ public class ChassisAuton {
 
     boolean isDriveBusy() {
         if(!theHardwarePlatter.leftFrontDrive.isBusy() || !theHardwarePlatter.rightFrontDrive.isBusy()) {
-            // Stop all motion;
-            theHardwarePlatter.leftFrontDrive.setPower(0);
-            theHardwarePlatter.rightFrontDrive.setPower(0);
-            // Turn off RUN_TO_POSITION
-            theHardwarePlatter.leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            theHardwarePlatter.rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rotate(0); /* stops all four wheels */
             return(false);
         } else {
             return(true);
@@ -96,6 +87,9 @@ public class ChassisAuton {
     }
 
     private void rotate(double power) {
+        for(DcMotor wheelDrive : theHardwarePlatter.wheelDrives)
+            wheelDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         theHardwarePlatter.leftFrontDrive.setPower(power);
         theHardwarePlatter.rightFrontDrive.setPower(-power);
         theHardwarePlatter.leftBackDrive.setPower(power);
