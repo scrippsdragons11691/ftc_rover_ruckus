@@ -8,7 +8,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 public class ChassisAuton {
-    static final double     COUNTS_PER_MOTOR_REV    = 280 ;    // eg: TETRIX Motor Encoder
+    //Rev Hex HD Motor 2240 counts per rotation
+    static final double     COUNTS_PER_MOTOR_REV    = 2240 ;    // 20 - 537.6, 40 - 1120, 60 - 1680 (cpr) Gear Neverest Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 1 ;     // This is < 1.0 if geared UP
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
@@ -28,6 +29,11 @@ public class ChassisAuton {
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         theHardwarePlatter.imu.initialize(parameters);
+
+		theHardwarePlatter.leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        theHardwarePlatter.rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        theHardwarePlatter.leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        theHardwarePlatter.rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
     }
 
     void driveAuton(double distanceInches) {

@@ -29,9 +29,9 @@ public class Arm {
         if(Math.abs(error) > POS_TOLERANCE) {
             is_moving = true;
             if(error < POS_TOLERANCE) {
-                theHardwarePlatter.armDrive.setPower(-INTAKE_DRIVE_SPEED);
+                backward();
             } else {
-                theHardwarePlatter.armDrive.setPower(INTAKE_DRIVE_SPEED);
+                forward();
             }
         } else {
             is_moving = false;
@@ -69,14 +69,14 @@ public class Arm {
     }
 
     void move(double speed) {
-        driveSpeedSetPoint = Math.pow(speed, 3) * 0.2;
+        driveSpeedSetPoint = Math.pow(speed, 3) * 0.3;
         driveArm();
+		is_moving = false;
     }
 
     private void driveArm() {
         theHardwarePlatter.armDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         theHardwarePlatter.armDrive.setPower(driveSpeedSetPoint);
-        is_moving = false;
     }
 
     void stop() {
