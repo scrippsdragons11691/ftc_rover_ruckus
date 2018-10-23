@@ -1,22 +1,24 @@
 package org.firstinspires.ftc.teamcode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import java.util.Set;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class Arm {
 
     static final double INTAKE_DRIVE_SPEED      = 0.1;
-    static final double ARM_HOLD_VOLTS          = 0.001;
-    static final double POS_TOLERANCE           = 0.1;
+    static final double ARM_HOLD_VOLTS          = 0.05;
+    static final double POS_TOLERANCE           = 0.05;
     static final double UNFOLD_POSITION_VOLTS   = 3.3;
-    static final double PICKUP_POSITION_VOLTS   = 3.0;
-    static final double DRIVE_POSITION_VOLTS    = 1.1;
-    static final double RELEASE_POSITION_VOLTS  = 1.1;
+    static final double PICKUP_POSITION_VOLTS   = 3.05;
+    static final double DRIVE_POSITION_VOLTS    = 1.15;
+    static final double RELEASE_POSITION_VOLTS  = 0.85;
 
     HardwarePlatter theHardwarePlatter;
     private double  driveSpeedSetPoint = 0.0;
     private boolean is_moving = false;
     private double  targetPosition;
+    private double  armSpeed;
 
     public Arm(HardwarePlatter hwPlatter) {
         theHardwarePlatter = hwPlatter;
@@ -28,13 +30,16 @@ public class Arm {
 
         if(Math.abs(error) > POS_TOLERANCE) {
             is_moving = true;
-            if(error < POS_TOLERANCE) {
-                theHardwarePlatter.armDrive.setPower(-INTAKE_DRIVE_SPEED);
-            } else {
-                theHardwarePlatter.armDrive.setPower(INTAKE_DRIVE_SPEED);
+            if(error < 0) {
+                armSpeed =INTAKE_DRIVE_SPEED;
+                driveArm2();
+            } else if(error > 0) {
+                armSpeed = -INTAKE_DRIVE_SPEED;
+                driveArm2();
             }
         } else {
             is_moving = false;
+            stop();
         }
     }
 
@@ -58,27 +63,29 @@ public class Arm {
         gotoPosition();
     }
 
-    void backward() {
-        driveSpeedSetPoint = INTAKE_DRIVE_SPEED;
+    void backward(double intakeDriveSpeed) {
+        intakeDriveSpeed = Math.pow(intakeDriveSpeed, 3) * 0.3;
+        driveSpeedSetPoint = intakeDriveSpeed;
         driveArm();
     }
 
-    void forward() {
-        driveSpeedSetPoint = -INTAKE_DRIVE_SPEED;
+    void forward(double intakeDriveSpeed) {
+        intakeDriveSpeed = Math.pow(intakeDriveSpeed, 3) * 0.3;
+        driveSpeedSetPoint = intakeDriveSpeed;
         driveArm();
     }
-
-    void move(double speed) {
-        driveSpeedSetPoint = Math.pow(speed, 3) * 0.2;
-        driveArm();
+    private void driveArm2() {    // driveArm2 is used to move the arm to the set positions.
+        theHardwarePlatter.armDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        theHardwarePlatter.armDrive.setPower(armSpeed);
     }
-
     private void driveArm() {
         theHardwarePlatter.armDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         theHardwarePlatter.armDrive.setPower(driveSpeedSetPoint);
-        is_moving = false;
     }
-
+    void move(double speed){
+        driveSpeedSetPoint = Math.pow(speed,3)*0.2;
+        driveArm();
+    }
     void stop() {
         theHardwarePlatter.armDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         if( theHardwarePlatter.armPotentiometer.getVoltage() > DRIVE_POSITION_VOLTS) {
@@ -95,13 +102,7 @@ public class Arm {
             stop();
     }
 
-    boolean isMoving() {
-        return(is_moving);
-    }
-
     void display(Telemetry telemetry) {
         telemetry.addData("pot", theHardwarePlatter.armPotentiometer.getVoltage());
     }
 }
-
-

@@ -9,7 +9,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 public class ChassisAuton {
-    static final double     COUNTS_PER_MOTOR_REV    = 280 ;    // eg: TETRIX Motor Encoder
+    //Rev Hex HD Motor 2240 counts per rotation
+    static final double     COUNTS_PER_MOTOR_REV    = 2240 ;    // 20 - 537.6, 40 - 1120, 60 - 1680 (cpr) Gear Neverest Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 1 ;     // This is < 1.0 if geared UP
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
@@ -24,33 +25,68 @@ public class ChassisAuton {
 
     public ChassisAuton(HardwarePlatter hwPlatter) {
         theHardwarePlatter = hwPlatter;
+        
+        theHardwarePlatter.leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        theHardwarePlatter.rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        theHardwarePlatter.leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        theHardwarePlatter.rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        
     }
 
-    void driveAuton(double distanceInches) {
+    void driveAuton(double distanceInches, double speed) {
 
-        double speed = 1;
+        //double speed = 1;
         double leftInches = distanceInches;
         double rightInches = distanceInches;
         double timeoutS;
-        int newLeftTarget;
-        int newRightTarget;
+        int newLeftFTarget;
+        int newRightFTarget;
+        int newLeftBTarget;
+        int newRightBTarget;
+        
+        theHardwarePlatter.leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        theHardwarePlatter.rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        theHardwarePlatter.leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        theHardwarePlatter.rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        theHardwarePlatter.leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        theHardwarePlatter.rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        theHardwarePlatter.leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        theHardwarePlatter.rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Determine new target position, and pass to motor controller
-        newLeftTarget = theHardwarePlatter.leftFrontDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-        newRightTarget = theHardwarePlatter.rightFrontDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+        newLeftFTarget = theHardwarePlatter.leftFrontDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+        newRightFTarget = theHardwarePlatter.rightFrontDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+        newLeftBTarget = theHardwarePlatter.leftBackDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+        newRightBTarget = theHardwarePlatter.rightBackDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+        
+        theHardwarePlatter.leftFrontDrive.setTargetPosition(newLeftFTarget);
+        theHardwarePlatter.rightFrontDrive.setTargetPosition(newRightFTarget);
+        theHardwarePlatter.leftBackDrive.setTargetPosition(newLeftBTarget);
+        theHardwarePlatter.rightBackDrive.setTargetPosition(newRightBTarget);
 
-        theHardwarePlatter.leftFrontDrive.setTargetPosition(newLeftTarget);
-        theHardwarePlatter.rightFrontDrive.setTargetPosition(newRightTarget);
 
         // Turn On RUN_TO_POSITION
         theHardwarePlatter.leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         theHardwarePlatter.rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        theHardwarePlatter.leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        theHardwarePlatter.rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
 
 
         // reset the timeout time and start motion.
-        runtime.reset();
+        //runtime.reset();
         theHardwarePlatter.leftFrontDrive.setPower(Math.abs(speed));
         theHardwarePlatter.rightFrontDrive.setPower(Math.abs(speed));
+        theHardwarePlatter.leftBackDrive.setPower(Math.abs(speed));
+        theHardwarePlatter.rightBackDrive.setPower(Math.abs(speed));
+        
+         while(theHardwarePlatter.leftBackDrive.isBusy() && theHardwarePlatter.rightBackDrive.isBusy())
+            {
+            //telemetry.addLine("Encoders_run");
+            //telemetry.update();
+            }
+        
     }
 
     private double getAbsoluteHeading() {
@@ -75,7 +111,7 @@ public class ChassisAuton {
         }
     }
     public boolean isDriveBusy() {
-        if(!theHardwarePlatter.leftFrontDrive.isBusy() || !theHardwarePlatter.rightFrontDrive.isBusy()) {
+        if(!theHardwarePlatter.leftBackDrive.isBusy() || !theHardwarePlatter.rightBackDrive.isBusy()) {
             // Stop all motion;
             theHardwarePlatter.leftFrontDrive.setPower(0);
             theHardwarePlatter.rightFrontDrive.setPower(0);
