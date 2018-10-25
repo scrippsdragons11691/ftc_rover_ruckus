@@ -92,7 +92,7 @@ public class ChassisAuton {
         }
     }
 
-    private void rotate(double power) {
+    void rotate(double power) {
         for(DcMotor wheelDrive : theHardwarePlatter.wheelDrives)
             wheelDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
