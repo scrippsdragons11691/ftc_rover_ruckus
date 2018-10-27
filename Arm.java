@@ -40,6 +40,7 @@ public class Arm {
         } else {
             is_moving = false;
             stop();
+
         }
     }
     
