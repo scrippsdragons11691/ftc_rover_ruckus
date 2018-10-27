@@ -12,7 +12,6 @@ public class HardwarePlatter {
     public DcMotor rightFrontDrive;
     public DcMotor leftBackDrive;
     public DcMotor rightBackDrive;
-    public DcMotor wheelDrives[] = { leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive };
 
     public DcMotor combineDrive;
 
@@ -24,8 +23,9 @@ public class HardwarePlatter {
 
     public Servo dumpServo;
 
-    public Servo wheeliebarServo;
-
+    public Servo wheeliebarLeftServo;
+    public Servo wheeliebarRightServo;
+    
     public BNO055IMU imu;
 
     public HardwarePlatter(HardwareMap hMap){
@@ -39,6 +39,12 @@ public class HardwarePlatter {
         elevatorDrive = (DcMotor)hMap.get("elevator_climb");
         combineDrive = (DcMotor)hMap.get("combine_drive");
         clawServo = (Servo)hMap.get("claw_servo");
+        wheeliebarRightServo = (Servo)hMap.get("wheeliebarRight");
+        wheeliebarLeftServo = (Servo)hMap.get("wheeliebarLeft");
         imu          = hMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        imu.initialize(parameters);
     }
 }

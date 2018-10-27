@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -15,47 +16,77 @@ public class ChassisAuton {
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     DRIVE_SPEED             = 0.6;
-    static final double     TURN_SPEED              = 0.3;
-    static final double     ANGLE_TOLERANCE         = 3;
+    static final double     TURN_SPEED              = 0.5;
 
+    private ElapsedTime runtime = new ElapsedTime();
     HardwarePlatter theHardwarePlatter;
     double gyroTarget;
     double headingResetValue;
 
     public ChassisAuton(HardwarePlatter hwPlatter) {
         theHardwarePlatter = hwPlatter;
-
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        theHardwarePlatter.imu.initialize(parameters);
-
-		theHardwarePlatter.leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        
+        theHardwarePlatter.leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         theHardwarePlatter.rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         theHardwarePlatter.leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         theHardwarePlatter.rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        
     }
 
-    void driveAuton(double distanceInches) {
+    void driveAuton(double distanceInches, double speed) {
 
-        int newTargetPos;
-        int distanceCounts = (int)(distanceInches * COUNTS_PER_INCH);
+        //double speed = 1;
+        double leftInches = distanceInches;
+        double rightInches = distanceInches;
+        double timeoutS;
+        int newLeftFTarget;
+        int newRightFTarget;
+        int newLeftBTarget;
+        int newRightBTarget;
+        
+        theHardwarePlatter.leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        theHardwarePlatter.rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        theHardwarePlatter.leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        theHardwarePlatter.rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        theHardwarePlatter.leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        theHardwarePlatter.rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        theHardwarePlatter.leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        theHardwarePlatter.rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Determine new target position, and pass to motor controller
-        for(DcMotor wheelDrive : theHardwarePlatter.wheelDrives) {
-            wheelDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            newTargetPos = wheelDrive.getCurrentPosition() + distanceCounts;
-            wheelDrive.setTargetPosition(newTargetPos);
-            wheelDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-        for(DcMotor wheelDrive : theHardwarePlatter.wheelDrives)
-            wheelDrive.setPower(Math.abs(DRIVE_SPEED));
-    }
+        newLeftFTarget = theHardwarePlatter.leftFrontDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+        newRightFTarget = theHardwarePlatter.rightFrontDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+        newLeftBTarget = theHardwarePlatter.leftBackDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+        newRightBTarget = theHardwarePlatter.rightBackDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+        
+        theHardwarePlatter.leftFrontDrive.setTargetPosition(newLeftFTarget);
+        theHardwarePlatter.rightFrontDrive.setTargetPosition(newRightFTarget);
+        theHardwarePlatter.leftBackDrive.setTargetPosition(newLeftBTarget);
+        theHardwarePlatter.rightBackDrive.setTargetPosition(newRightBTarget);
 
-    public void turn(double angledegrees) {
-        gyroTarget = angledegrees;
-        headingResetValue = getAbsoluteHeading();
-        isGyroBusy();
+
+        // Turn On RUN_TO_POSITION
+        theHardwarePlatter.leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        theHardwarePlatter.rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        theHardwarePlatter.leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        theHardwarePlatter.rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+
+        // reset the timeout time and start motion.
+        //runtime.reset();
+        theHardwarePlatter.leftFrontDrive.setPower(Math.abs(speed));
+        theHardwarePlatter.rightFrontDrive.setPower(Math.abs(speed));
+        theHardwarePlatter.leftBackDrive.setPower(Math.abs(speed));
+        theHardwarePlatter.rightBackDrive.setPower(Math.abs(speed));
+        
+         while(theHardwarePlatter.leftBackDrive.isBusy() && theHardwarePlatter.rightBackDrive.isBusy())
+            {
+            //telemetry.addLine("Encoders_run");
+            //telemetry.update();
+            }
+        
     }
 
     private double getAbsoluteHeading() {
@@ -68,34 +99,38 @@ public class ChassisAuton {
 
     boolean isGyroBusy() {
         double gyroActual = this.getRelativeHeading();
-        double error = gyroTarget - gyroActual;
-        boolean isBusy;
-        if(Math.abs(error) > ANGLE_TOLERANCE) {
-            if (error < 0)
-                this.rotate(TURN_SPEED);
-            else
-                this.rotate(-TURN_SPEED);
-            isBusy = true;
+        if(gyroActual < gyroTarget) {
+            this.turn(0.1);
+            return true;
+        } else if(gyroActual > gyroTarget) {
+            this.turn(-0.1);
+            return true;
         } else {
-            this.rotate(0.0);
-            isBusy = false;
+            this.turn(0.0);
+            return false;
         }
-        return(isBusy);
     }
-
-    boolean isDriveBusy() {
-        if(!theHardwarePlatter.leftFrontDrive.isBusy() || !theHardwarePlatter.rightFrontDrive.isBusy()) {
-            rotate(0); /* stops all four wheels */
+    public boolean isDriveBusy() {
+        if(!theHardwarePlatter.leftBackDrive.isBusy() || !theHardwarePlatter.rightBackDrive.isBusy()) {
+            // Stop all motion;
+            theHardwarePlatter.leftFrontDrive.setPower(0);
+            theHardwarePlatter.rightFrontDrive.setPower(0);
+            // Turn off RUN_TO_POSITION
+            theHardwarePlatter.leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            theHardwarePlatter.rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             return(false);
         } else {
             return(true);
         }
     }
 
-    void rotate(double power) {
-        for(DcMotor wheelDrive : theHardwarePlatter.wheelDrives)
-            wheelDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    public void turn(double angledegrees) {
+        gyroTarget = angledegrees;
+        headingResetValue = getAbsoluteHeading();
+    }
+    
 
+    void rotate(double power) {
         theHardwarePlatter.leftFrontDrive.setPower(power);
         theHardwarePlatter.rightFrontDrive.setPower(-power);
         theHardwarePlatter.leftBackDrive.setPower(power);

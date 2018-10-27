@@ -12,7 +12,8 @@ public class Teleop extends LinearOpMode {
     Intake theIntake;
     ElevatorClimb theElevatorClimb;
     ClawLatch theClawLatch;
-
+    Wheeliebar theWheeliebar;
+    
     public void runOpMode() {
         theHardwarePlatter = new HardwarePlatter(hardwareMap);
         theChassis = new Chassis(theHardwarePlatter);
@@ -20,7 +21,9 @@ public class Teleop extends LinearOpMode {
         theIntake = new Intake(theHardwarePlatter);
         theElevatorClimb = new ElevatorClimb(theHardwarePlatter);
         theClawLatch = new ClawLatch(theHardwarePlatter);
-
+        theWheeliebar = new Wheeliebar(theHardwarePlatter);
+        
+        //theWheeliebar.wheeliebar_RB_down();
 
         telemetry.addData("robot", "initialized");
         telemetry.update();
@@ -34,7 +37,7 @@ public class Teleop extends LinearOpMode {
                 boost = 0.5;
             else
                 boost = 1.0;
-
+                
             if(gamepad2.left_trigger > 0.1)
                 boostArm = 0.5;
             else
@@ -42,7 +45,7 @@ public class Teleop extends LinearOpMode {
             double speed = Math.pow(-gamepad1.left_stick_y, 3) * boost;
             double turn  = Math.pow(gamepad1.right_stick_x, 3) * boost;
             theChassis.drive(speed, turn);
-
+            
             theIntake.driveCombine(gamepad2.dpad_up, gamepad2.dpad_down);
 
             if(gamepad2.right_stick_y < -0.1){
@@ -60,7 +63,7 @@ public class Teleop extends LinearOpMode {
             } else {
                 theArm.moveOrHoldPosition();
             }
-
+            
             if(gamepad1.dpad_left)
                 theClawLatch.open();
             else if(gamepad1.dpad_right)
@@ -83,7 +86,13 @@ public class Teleop extends LinearOpMode {
             else{
                 theElevatorClimb.climberStop();
             }
-
+            if(gamepad1.right_bumper) {
+                theWheeliebar.wheeliebar_RB_middle();
+            }
+            else{
+                theWheeliebar.wheeliebar_RB_down();
+            }
+            
             telemetry.addData("dump servo", theHardwarePlatter.dumpServo.getPosition());
             telemetry.addData("arm", gamepad2.right_stick_y);
             theArm.display(telemetry);
