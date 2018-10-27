@@ -54,45 +54,46 @@ public class AutonDepot extends LinearOpMode {
         waitForStart();
         
         int nextStep = 1;
-        int step = 0;
+        int step = 4;
         runtime.reset();
         timeout = 0;
-        while(opModeIsActive() && (step < 5)) {
+        while(opModeIsActive() && (step < 15)) {
             telemetry.addData("Encoders_run", theHardwarePlatter.elevatorDrive.getCurrentPosition());
             telemetry.addData("Step", step);
             telemetry.addData("Timer", runtime.time());
             telemetry.addData("Timeout", timeout);
             telemetry.update();  
             
-            //if((runtime.time() > timeout) /*&& !isBusy()*/){
-
+            if((runtime.time() > timeout) && !theHardwarePlatter.leftBackDrive.isBusy() && !theArm.isMoving()){
+                step++;
                 runtime.reset();
-                timeout = 5;
+                timeout = 2;
                 
-                if (step == nextStep++) { timeout = 0.3; clawLatch.open(); }
-                else if (step == nextStep++) { 
+                if (step == 1) { timeout = 0.3; clawLatch.open(); }
+                else if (step == 2) { 
                     //theElevatorClimb.autonElevatorClimb(0.25, 1); 
                     theElevatorClimb.dropDown();
-                    sleep(300); step++;
-                    timeout = 0.3;
+                    sleep(500); 
+                    timeout = 0.5;
                     
                 } // up
-                else if (step == nextStep++) { theElevatorClimb.climberStop();step++; }
-                else if (step == nextStep++) {
-                    theElevatorClimb.climbUpAuton();
-                    sleep(3000);step++;
+                else if (step == 3) { theElevatorClimb.climberStop(); }
+                else if (step == 4) {
+                    theElevatorClimb.climbUp();
+                    sleep(3000);
                     timeout = 3;
                 }
-                else if (step == nextStep++) { theElevatorClimb.climberStop();step++; }
-                else if (step == nextStep++) { theChassis.driveAuton(-0.25, 0.5);step++; }
-                else if (step == nextStep++) theChassis.driveAuton(6.5, 0.5);
-                else if (step == nextStep++) wheeliebar.wheeliebar_RB_down();
-                else if (step == nextStep++) theArm.drive();
-                else if (step == nextStep++) theChassis.driveAuton(-6.5, 0.5);
-                else if (step == nextStep++) theArm.unfold();
-                else if (step == nextStep++) theIntake.openDumpServo();
-                else if (step == nextStep++) theIntake.closeDumpServo();
-                else if (step == nextStep++) theArm.pickUp();
+                else if (step == 5) { theElevatorClimb.climberStop();timeout=0; }
+                else if (step == 6) { theChassis.driveAuton(0.25, 0.5); }
+                else if (step == 7) { theChassis.driveAuton(-6.5, 0.5); }
+                else if (step == 8) wheeliebar.wheeliebar_RB_down();
+                else if (step == 9) { theArm.drive(); }
+                else if (step == 10) theChassis.driveAuton(6.5, 0.2);
+                else if (step == 11) clawLatch.closeAuton();
+                else if (step == 12) { theArm.unfold();timeout=3; }
+                else if (step == 13) theIntake.openDumpServo();
+                else if (step == 14) theIntake.closeDumpServo();
+                else if (step == 15) theArm.pickUp();
                 else if (step == nextStep++) theIntake.driveCombine(true, false);
                 else if (step == nextStep++) theIntake.driveCombine(false, false);
                 else if (step == nextStep++) theChassis.driveAuton(6, 0.5);
@@ -111,8 +112,8 @@ public class AutonDepot extends LinearOpMode {
                 else if (step == nextStep++) wheeliebar.wheeliebar_RB_middle();
                 else if (step == nextStep++) theChassis.driveAuton(1, 0.5);
 
-
-            //}
+                sleep(20);
+            }
 
 
         }

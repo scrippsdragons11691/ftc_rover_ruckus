@@ -18,7 +18,6 @@ public class Arm {
     private double  driveSpeedSetPoint = 0.0;
     private boolean is_moving = false;
     private double  targetPosition;
-    private double  armSpeed;
 
     public Arm(HardwarePlatter hwPlatter) {
         theHardwarePlatter = hwPlatter;
@@ -31,16 +30,15 @@ public class Arm {
         if(Math.abs(error) > POS_TOLERANCE) {
             is_moving = true;
             if(error < 0) {
-                armSpeed =INTAKE_DRIVE_SPEED;
-                driveArm2();
+                driveSpeedSetPoint =INTAKE_DRIVE_SPEED;
+                driveArm();
             } else if(error > 0) {
-                armSpeed = -INTAKE_DRIVE_SPEED;
-                driveArm2();
+                driveSpeedSetPoint = -INTAKE_DRIVE_SPEED;
+                driveArm();
             }
         } else {
             is_moving = false;
             stop();
-
         }
     }
     
@@ -54,7 +52,7 @@ public class Arm {
         double derivative = (error - previousError) / deltaTime;
         
         armSpeed =((Kp*Error) + (Ki*Integral) + (Kd*Derivative))
-        driveArm2();
+        driveArm();
         
         Previous_Error = Error;*/
     }
@@ -90,10 +88,6 @@ public class Arm {
         driveSpeedSetPoint = intakeDriveSpeed;
         driveArm();
     }
-    private void driveArm2() {    // driveArm2 is used to move the arm to the set positions.
-        theHardwarePlatter.armDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        theHardwarePlatter.armDrive.setPower(armSpeed);
-    }
     private void driveArm() {
         theHardwarePlatter.armDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         theHardwarePlatter.armDrive.setPower(driveSpeedSetPoint);
@@ -124,5 +118,6 @@ public class Arm {
 
     void display(Telemetry telemetry) {
         telemetry.addData("pot", theHardwarePlatter.armPotentiometer.getVoltage());
+        telemetry.addData("isMoving", isMoving());
     }
 }
