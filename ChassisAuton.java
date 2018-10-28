@@ -80,13 +80,6 @@ public class ChassisAuton {
         theHardwarePlatter.rightFrontDrive.setPower(Math.abs(speed));
         theHardwarePlatter.leftBackDrive.setPower(Math.abs(speed));
         theHardwarePlatter.rightBackDrive.setPower(Math.abs(speed));
-        
-         while(theHardwarePlatter.leftBackDrive.isBusy() && theHardwarePlatter.rightBackDrive.isBusy())
-            {
-            //telemetry.addLine("Encoders_run");
-            //telemetry.update();
-            }
-        
     }
 
     private double getAbsoluteHeading() {
@@ -135,5 +128,9 @@ public class ChassisAuton {
         theHardwarePlatter.rightFrontDrive.setPower(-power);
         theHardwarePlatter.leftBackDrive.setPower(power);
         theHardwarePlatter.rightBackDrive.setPower(-power);
+    }
+
+    void driveStop() {
+        rotate(0);
     }
 }

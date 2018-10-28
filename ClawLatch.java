@@ -28,11 +28,12 @@ public class ClawLatch {
         }
         theHardwarePlatter.clawServo.setPosition(newPosition);
     }
-    void closeAuton() {
 
+    void closeAuton() {
         theHardwarePlatter.clawServo.setPosition(0.5);
-    }    
-    void display(Telemetry telemetry) {
-        telemetry.addData("clawsevo pos", theHardwarePlatter.clawServo.getPosition());
+    }
+
+    void openAuton() {
+        theHardwarePlatter.clawServo.setPosition(0);
     }
 }
