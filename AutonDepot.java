@@ -43,12 +43,10 @@ public class AutonDepot extends OpMode {
             timeout = 2;
 
             if (step == 1) {
-                timeout = 0.3;
                 clawLatch.open();
             } else if (step == 2) {
                 //theElevatorClimb.autonElevatorClimb(0.25, 1);
                 theElevatorClimb.dropDown();
-                timeout = 0.5;
             } else if (step == 3) {
                 theElevatorClimb.climberStop();
             } else if (step == 4) {
@@ -68,7 +66,6 @@ public class AutonDepot extends OpMode {
             else if (step == 11) clawLatch.closeAuton();
             else if (step == 12) {
                 theArm.unfold();
-                timeout = 3;
             } else if (step == 13) theIntake.openDumpServo();
             else if (step == 14) theIntake.closeDumpServo();
             else if (step == 15) theArm.pickUp();
