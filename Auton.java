@@ -66,13 +66,13 @@ public class Auton extends OpMode {
                     theElevatorClimb.dropDown();
                     timeout = 2000;
                 } else if (step == 2) {
-                        theChassis.driveAuton(6.5);
+                        theChassis.driveAuton(6.5, 0.5);
                     timeout = 2000;
                 } else if (step == 3) {
                     theArm.drive();
                     timeout = 2000;
                 } else if (step == 4) {
-                    theChassis.driveAuton(-6.5);
+                    theChassis.driveAuton(-6.5, 0.5);
                     timeout = 2000;
                 } else if (step == 5) {
                     theArm.unfold();
