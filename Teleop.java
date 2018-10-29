@@ -13,6 +13,7 @@ public class Teleop extends LinearOpMode {
     ElevatorClimb theElevatorClimb;
     ClawLatch theClawLatch;
     Wheeliebar theWheeliebar;
+    MarkerServo theMarkerServo;
     
     public void runOpMode() {
         theHardwarePlatter = new HardwarePlatter(hardwareMap);
@@ -22,8 +23,8 @@ public class Teleop extends LinearOpMode {
         theElevatorClimb = new ElevatorClimb(theHardwarePlatter);
         theClawLatch = new ClawLatch(theHardwarePlatter);
         theWheeliebar = new Wheeliebar(theHardwarePlatter);
+        theMarkerServo = new MarkerServo(theHardwarePlatter);
         
-        //theWheeliebar.wheeliebar_RB_down();
 
         telemetry.addData("robot", "initialized");
         telemetry.update();
@@ -52,6 +53,8 @@ public class Teleop extends LinearOpMode {
                 theArm.move(-gamepad2.right_stick_y * boostArm);
             } else if(gamepad2.right_stick_y > 0.1) {
                 theArm.move(-gamepad2.right_stick_y * boostArm);
+            } else if(gamepad2.right_stick_button) {
+                theArm.middle();
             } else if(gamepad2.x) {
                 theArm.release();
             } else if(gamepad2.b) {
@@ -60,10 +63,15 @@ public class Teleop extends LinearOpMode {
                 theArm.pickUp();
             } else if(gamepad2.y){
                 theArm.unfold();
-            } else {
-                theArm.moveOrHoldPosition();
+            } else if(gamepad1.a) {
+                theClawLatch.autoOpen();
+            } else if(gamepad1.b){
+                theClawLatch.autoClose();
+            }else if(gamepad1.y){
+                theMarkerServo.markerServo_down();
+            } else if(gamepad1.x){
+                theMarkerServo.markerServo_up();
             }
-            
             if(gamepad1.dpad_left)
                 theClawLatch.open();
             else if(gamepad1.dpad_right)
@@ -71,7 +79,7 @@ public class Teleop extends LinearOpMode {
 
             if(gamepad2.left_bumper) {
                 theIntake.openDumpServo();
-            }else if(gamepad2.right_bumper) {
+            }else {
                 theIntake.closeDumpServo();
             }
             if(gamepad1.dpad_up){
@@ -87,12 +95,18 @@ public class Teleop extends LinearOpMode {
                 theElevatorClimb.climberStop();
             }
             if(gamepad1.right_bumper) {
-                theWheeliebar.wheeliebar_RB_middle();
-            }
-            else{
                 theWheeliebar.wheeliebar_RB_down();
             }
-            
+            else{
+                theWheeliebar.wheeliebar_RB_middle();
+            }
+            /*
+            if(gamepad1.right_trigger) {
+                theElevatorClimb.climbUp();
+                sleep (1500);
+                theClawLatch.close();
+            }
+            */
             telemetry.addData("dump servo", theHardwarePlatter.dumpServo.getPosition());
             telemetry.addData("arm", gamepad2.right_stick_y);
             theArm.display(telemetry);

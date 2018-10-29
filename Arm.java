@@ -6,13 +6,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class Arm {
 
-    static final double INTAKE_DRIVE_SPEED      = 0.1;
+    static final double INTAKE_DRIVE_SPEED      = 0.3;
     static final double ARM_HOLD_VOLTS          = 0.05;
     static final double POS_TOLERANCE           = 0.05;
     static final double UNFOLD_POSITION_VOLTS   = 3.3;
     static final double PICKUP_POSITION_VOLTS   = 3.05;
     static final double DRIVE_POSITION_VOLTS    = 1.15;
-    static final double RELEASE_POSITION_VOLTS  = 0.85;
+    static final double RELEASE_POSITION_VOLTS  = 0.95;
+    static final double MIDDLE_POSITION_VOLTS  = 2.50;
 
     HardwarePlatter theHardwarePlatter;
     private double  driveSpeedSetPoint = 0.0;
@@ -30,10 +31,10 @@ public class Arm {
         if(Math.abs(error) > POS_TOLERANCE) {
             is_moving = true;
             if(error < 0) {
-                driveSpeedSetPoint =INTAKE_DRIVE_SPEED;
+                driveSpeedSetPoint =INTAKE_DRIVE_SPEED; //up
                 driveArm();
             } else if(error > 0) {
-                driveSpeedSetPoint = -INTAKE_DRIVE_SPEED;
+                driveSpeedSetPoint = -INTAKE_DRIVE_SPEED*0.5; //down
                 driveArm();
             }
         } else {
@@ -76,6 +77,11 @@ public class Arm {
         targetPosition = RELEASE_POSITION_VOLTS;
         gotoPosition();
     }
+    
+        void middle() {
+        targetPosition = MIDDLE_POSITION_VOLTS;
+        gotoPosition();
+    }
 
     void backward(double intakeDriveSpeed) {
         intakeDriveSpeed = Math.pow(intakeDriveSpeed, 3) * 0.3;
@@ -93,7 +99,7 @@ public class Arm {
         theHardwarePlatter.armDrive.setPower(driveSpeedSetPoint);
     }
     void move(double speed){
-        driveSpeedSetPoint = Math.pow(speed,3)*0.2;
+        driveSpeedSetPoint = Math.pow(speed,3)*0.5;  //was 0.2
         driveArm();
     }
     void stop() {

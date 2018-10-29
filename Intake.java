@@ -28,7 +28,7 @@ public class Intake {
     }
     
     void closeDumpServo() {
-        theHardwarePlatter.dumpServo.setPosition(0.4);
+        theHardwarePlatter.dumpServo.setPosition(0.6);
     }
 
 }

@@ -27,6 +27,8 @@ public class HardwarePlatter {
     public Servo wheeliebarRightServo;
     
     public BNO055IMU imu;
+    
+    public Servo markerServo;
 
     public HardwarePlatter(HardwareMap hMap){
         leftFrontDrive = (DcMotor)hMap.get("left_front_drive");
@@ -42,6 +44,7 @@ public class HardwarePlatter {
         wheeliebarRightServo = (Servo)hMap.get("wheeliebarRight");
         wheeliebarLeftServo = (Servo)hMap.get("wheeliebarLeft");
         imu          = hMap.get(BNO055IMU.class, "imu");
+        markerServo = (Servo)hMap.get("marker_servo");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;

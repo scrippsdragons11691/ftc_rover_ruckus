@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -22,6 +23,9 @@ public class ChassisAuton {
     HardwarePlatter theHardwarePlatter;
     double gyroTarget;
     double headingResetValue;
+    boolean isTurning = false;
+    double powerSetpoint = 0.1;
+    double error;
 
     public ChassisAuton(HardwarePlatter hwPlatter) {
         theHardwarePlatter = hwPlatter;
@@ -43,6 +47,7 @@ public class ChassisAuton {
         int newRightFTarget;
         int newLeftBTarget;
         int newRightBTarget;
+
         
         theHardwarePlatter.leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         theHardwarePlatter.rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -80,6 +85,13 @@ public class ChassisAuton {
         theHardwarePlatter.rightFrontDrive.setPower(Math.abs(speed));
         theHardwarePlatter.leftBackDrive.setPower(Math.abs(speed));
         theHardwarePlatter.rightBackDrive.setPower(Math.abs(speed));
+        
+         while(theHardwarePlatter.leftBackDrive.isBusy() && theHardwarePlatter.rightBackDrive.isBusy())
+            {
+            //telemetry.addLine("Encoders_run");
+            //telemetry.update();
+            }
+        
     }
 
     private double getAbsoluteHeading() {
@@ -91,17 +103,21 @@ public class ChassisAuton {
     }
 
     boolean isGyroBusy() {
-        double gyroActual = this.getRelativeHeading();
-        if(gyroActual < gyroTarget) {
-            this.turn(0.1);
-            return true;
-        } else if(gyroActual > gyroTarget) {
-            this.turn(-0.1);
-            return true;
-        } else {
-            this.turn(0.0);
-            return false;
+        if(isTurning) {
+            error = gyroTarget - getAbsoluteHeading();
+            
+            if(Math.abs(error) > 1.0) {
+                if(error > 0) {
+                    rotate(-powerSetpoint);
+                } else {
+                    rotate(+powerSetpoint);
+                }
+            } else {
+                isTurning = false;
+                rotate(0);
+            }
         }
+        return(isTurning);
     }
     public boolean isDriveBusy() {
         if(!theHardwarePlatter.leftBackDrive.isBusy() || !theHardwarePlatter.rightBackDrive.isBusy()) {
@@ -117,20 +133,32 @@ public class ChassisAuton {
         }
     }
 
-    public void turn(double angledegrees) {
-        gyroTarget = angledegrees;
-        headingResetValue = getAbsoluteHeading();
+    public void turn(double angledegrees, double power) {
+        gyroTarget = angledegrees + getAbsoluteHeading();
+        isTurning = true;
+        powerSetpoint = power;
     }
     
 
     void rotate(double power) {
+        theHardwarePlatter.leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        theHardwarePlatter.rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        theHardwarePlatter.leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        theHardwarePlatter.rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         theHardwarePlatter.leftFrontDrive.setPower(power);
         theHardwarePlatter.rightFrontDrive.setPower(-power);
         theHardwarePlatter.leftBackDrive.setPower(power);
         theHardwarePlatter.rightBackDrive.setPower(-power);
     }
-
-    void driveStop() {
-        rotate(0);
+    
+    boolean isTurning() {
+        return(isTurning);
+    }
+    
+    void display(Telemetry telemetry) {
+        telemetry.addData("gyro rel heading - actual", getRelativeHeading());
+        telemetry.addData("gyro target", gyroTarget);
+        telemetry.addData("gyro abs heading", getAbsoluteHeading());
+        telemetry.addData("gyro error", error);
     }
 }

@@ -17,17 +17,17 @@ public class ElevatorClimb {
             theHardwarePlatter = hwPlatter;
     }
     
-    void climbUpAuton(){
-        theHardwarePlatter.elevatorDrive.setPower(0.3);
+    void climbUpAuton(){                                //elevator runs down to release the latch
+        theHardwarePlatter.elevatorDrive.setPower(0.75);
     }
     
-    void climbUp() {
+    void climbUp() {                                    //elevator runs down
         theHardwarePlatter.elevatorDrive.setPower(1);
     }
-    void dropDown() {
+    void dropDown() {                                   //elevator goes up
         theHardwarePlatter.elevatorDrive.setPower(-1);
     }
-    void climberStop() {
+    void climberStop() {                                //stops elevator motor
         theHardwarePlatter.elevatorDrive.setPower(0);
     }
     

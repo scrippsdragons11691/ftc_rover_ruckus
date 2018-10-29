@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
 
 public class ClawLatch {
     HardwarePlatter theHardwarePlatter;
     static final double DELTA_POSITION = 0.1;
+    static final double OPENPOSITION = 0;
+    static final double CLOSEPOSITION = .5;
 
     ClawLatch(HardwarePlatter hwPlatter) {
         theHardwarePlatter =  hwPlatter;
@@ -28,12 +31,18 @@ public class ClawLatch {
         }
         theHardwarePlatter.clawServo.setPosition(newPosition);
     }
-
     void closeAuton() {
-        theHardwarePlatter.clawServo.setPosition(0.5);
-    }
 
-    void openAuton() {
-        theHardwarePlatter.clawServo.setPosition(0);
+        theHardwarePlatter.clawServo.setPosition(0.5);
+    }    
+    void display(Telemetry telemetry) {
+        telemetry.addData("clawsevo pos", theHardwarePlatter.clawServo.getPosition());
     }
+        void autoClose() {
+        theHardwarePlatter.clawServo.setPosition(CLOSEPOSITION);
+        }
+
+        void autoOpen() {
+        theHardwarePlatter.clawServo.setPosition(OPENPOSITION);
+        }
 }
