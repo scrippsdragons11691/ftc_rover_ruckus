@@ -6,17 +6,22 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous
 public class AutonDepot extends OpMode {
-    HardwarePlatter theHardwarePlatter;
-    ChassisAuton theChassis;
-    Arm theArm;
-    Intake theIntake;
-    ElevatorClimb theElevatorClimb;
-    ClawLatch clawLatch;
-    Wheeliebar wheeliebar;
-    double timeout = 0;
-    int step = 4;
-    ElapsedTime runtime;
-    double holdTime;
+    private HardwarePlatter theHardwarePlatter;
+    private ChassisAuton theChassis;
+    private Arm theArm;
+    private Intake theIntake;
+    private ElevatorClimb theElevatorClimb;
+    private ClawLatch clawLatch;
+    private Wheeliebar wheeliebar;
+    private double timeout;
+    private int step;
+    private ElapsedTime runtime;
+    private double holdTime;
+
+    public AutonDepot() {
+        step = 4;
+        timeout = 0;
+    }
 
     public void init() {
         theHardwarePlatter = new HardwarePlatter(hardwareMap);
@@ -44,7 +49,7 @@ public class AutonDepot extends OpMode {
             timeout = 5;
             holdTime = 0.0;
 
-            if(     step ==  1) clawLatch.openAuton();
+            if(     step ==  1) clawLatch.open();
             else if(step ==  2) { theElevatorClimb.dropDown(); holdTime = 0.3; }
             else if(step ==  3)  theElevatorClimb.climberStop();
             else if(step ==  4) { theElevatorClimb.climbUp(); holdTime = 3; }
@@ -80,18 +85,18 @@ public class AutonDepot extends OpMode {
         }
     }
 
-    boolean isBusy() {
+    private boolean isBusy() {
         boolean flag;
+        theArm.moveOrHoldPosition();
         if(runtime.time() < holdTime)
         {
             flag = true;
         } else if(runtime.time() < timeout) {
-            theArm.moveOrHoldPosition();
             flag = theHardwarePlatter.elevatorDrive.isBusy() || theHardwarePlatter.leftFrontDrive.isBusy() ||
                     theArm.isMoving();
         } else {
             theArm.stop();
-            theChassis.driveStop();
+            theChassis.rotate(0);
             theElevatorClimb.climberStop();
             flag = false;
         }
