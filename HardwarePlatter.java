@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -20,6 +21,7 @@ public class HardwarePlatter {
 
     public DcMotor elevatorDrive;
     public Servo   clawServo;
+    public TouchSensor  climberLimitSw;
 
     public Servo dumpServo;
 
@@ -29,6 +31,7 @@ public class HardwarePlatter {
     public BNO055IMU imu;
     
     public Servo markerServo;
+    
 
     public HardwarePlatter(HardwareMap hMap){
         leftFrontDrive = (DcMotor)hMap.get("left_front_drive");
@@ -40,6 +43,7 @@ public class HardwarePlatter {
         dumpServo = (Servo)hMap.get("dump_servo");
         elevatorDrive = (DcMotor)hMap.get("elevator_climb");
         combineDrive = (DcMotor)hMap.get("combine_drive");
+        climberLimitSw = (TouchSensor)hMap.get("climber_limit_sw");
         clawServo = (Servo)hMap.get("claw_servo");
         wheeliebarRightServo = (Servo)hMap.get("wheeliebarRight");
         wheeliebarLeftServo = (Servo)hMap.get("wheeliebarLeft");

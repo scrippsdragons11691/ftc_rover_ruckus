@@ -25,6 +25,7 @@ public class Teleop extends LinearOpMode {
         theWheeliebar = new Wheeliebar(theHardwarePlatter);
         theMarkerServo = new MarkerServo(theHardwarePlatter);
         
+        boolean elevatorClimbset = false;
 
         telemetry.addData("robot", "initialized");
         telemetry.update();
@@ -63,7 +64,11 @@ public class Teleop extends LinearOpMode {
                 theArm.pickUp();
             } else if(gamepad2.y){
                 theArm.unfold();
-            } else if(gamepad1.a) {
+            }  else {
+                theArm.moveOrHoldPosition();
+            }
+            
+            if(gamepad1.a) {
                 theClawLatch.autoOpen();
             } else if(gamepad1.b){
                 theClawLatch.autoClose();
@@ -94,6 +99,17 @@ public class Teleop extends LinearOpMode {
             else{
                 theElevatorClimb.climberStop();
             }
+            if(!theHardwarePlatter.climberLimitSw .isPressed())
+                {
+                if(gamepad1.left_bumper || elevatorClimbset){
+                    theElevatorClimb.dropDownAuto();
+                    elevatorClimbset = true;
+                    }
+                }
+            else 
+                theElevatorClimb.climberStop();
+                elevatorClimbset = false;
+
             if(gamepad1.right_bumper) {
                 theWheeliebar.wheeliebar_RB_down();
             }

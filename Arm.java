@@ -12,7 +12,7 @@ public class Arm {
     static final double UNFOLD_POSITION_VOLTS   = 3.3;
     static final double PICKUP_POSITION_VOLTS   = 3.05;
     static final double DRIVE_POSITION_VOLTS    = 1.15;
-    static final double RELEASE_POSITION_VOLTS  = 0.95;
+    static final double RELEASE_POSITION_VOLTS  = 0.85;
     static final double MIDDLE_POSITION_VOLTS  = 2.50;
 
     HardwarePlatter theHardwarePlatter;
@@ -32,10 +32,10 @@ public class Arm {
             is_moving = true;
             if(error < 0) {
                 driveSpeedSetPoint =INTAKE_DRIVE_SPEED; //up
-                driveArm();
+                driveArm2();
             } else if(error > 0) {
                 driveSpeedSetPoint = -INTAKE_DRIVE_SPEED*0.5; //down
-                driveArm();
+                driveArm2();
             }
         } else {
             is_moving = false;
@@ -97,13 +97,19 @@ public class Arm {
     private void driveArm() {
         theHardwarePlatter.armDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         theHardwarePlatter.armDrive.setPower(driveSpeedSetPoint);
+        is_moving = false;
     }
+    private void driveArm2() {
+        theHardwarePlatter.armDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        theHardwarePlatter.armDrive.setPower(driveSpeedSetPoint);
+    }    
     void move(double speed){
         driveSpeedSetPoint = Math.pow(speed,3)*0.5;  //was 0.2
         driveArm();
     }
     void stop() {
         theHardwarePlatter.armDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        is_moving = false;
         if( theHardwarePlatter.armPotentiometer.getVoltage() > DRIVE_POSITION_VOLTS) {
             theHardwarePlatter.armDrive.setPower(ARM_HOLD_VOLTS);
         } else {
