@@ -29,7 +29,7 @@ public class Auton extends OpMode {
         theElevatorClimb = new ElevatorClimb(theHardwarePlatter);
         theChassis = new ChassisAuton(theHardwarePlatter);
         theClaw = new ClawLatch(theHardwarePlatter);
-        theArm      = new Arm(theHardwarePlatter);
+        theArm = new Arm(theHardwarePlatter);
         intake = new Intake(theHardwarePlatter);
 
         detector = new GoldAlignDetector();
@@ -59,14 +59,13 @@ public class Auton extends OpMode {
 
     public void loop() {
         if (step < 6) {
-            if (!theChassis.isDriveBusy() && !theArm.isMoving() || (runtime.time() > timeout))
-            {
+            if (!theChassis.isDriveBusy() && !theArm.isMoving() || (runtime.time() > timeout)) {
                 step++;
                 if (step == 1) {
                     theElevatorClimb.dropDown();
                     timeout = 2000;
                 } else if (step == 2) {
-                        theChassis.driveAuton(6.5, 0.5);
+                    theChassis.driveAuton(6.5, 0.5);
                     timeout = 2000;
                 } else if (step == 3) {
                     theArm.drive();
@@ -85,8 +84,8 @@ public class Auton extends OpMode {
                 runtime.reset();
             }
         }
-        telemetry.addData("IsAligned" , detector.getAligned()); // Is the bot aligned with the gold mineral
-        telemetry.addData("X Pos" , detector.getXPosition()); // Gold X pos.
+        telemetry.addData("IsAligned", detector.getAligned()); // Is the bot aligned with the gold mineral
+        telemetry.addData("X Pos", detector.getXPosition()); // Gold X pos.
     }
 
     public void stop() {
