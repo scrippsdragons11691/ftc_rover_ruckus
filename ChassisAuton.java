@@ -204,4 +204,8 @@ public class ChassisAuton {
         telemetry.addData("gyro abs heading", getAbsoluteHeading());
         telemetry.addData("gyro error", error);
     }
+    
+    void stop() {
+        rotate(0);
+    }
 }

@@ -37,32 +37,34 @@ public class AutonCrater extends LinearOpMode{
         while(opModeIsActive()) {
         
         //1) Land and unlatch from lander
-            theClawLatch.closeAuton();
+ /*           theClawLatch.closeAuton();
             theElevatorClimb.dropDown();        // robot goes up to release the latch
             delay(750);
             theElevatorClimb.climberStop();     //stops the climber motor
             theElevatorClimb.climbUpAuton();    //robot drops down
             delay(5000);
             theElevatorClimb.climberStop();     // Stops motor
-            
+ */           
         // 2, 3 ) Unfold the arms
-            theChassis.driveAuton(-6.5,0.5);        //Drive forward 6.5 inches
+            driveAuton(-6.5,0.5);
+            //Drive forward 6.5 inches
             theWheeliebar.wheeliebar_RB_down();
             theElevatorClimb.dropDown();         // Reset the climber position     
             delay(2000);                             //Wait 1.0 seconds
 
             theElevatorClimb.climberStop();
-            theArm.drive();                         //Set the arm at a 90 degree angle (drive position)
-            delay(2000);                             //Wait 1 second
+            drive();                         //Set the arm at a 90 degree angle (drive position)
+            //delay(2000);                             //Wait 1 second
 
-            theChassis.driveAuton(6.0,0.5);         //Drive backward 6.5 inches
-            delay(1000);                             //Wait for 0.5 seconds
+            driveAuton(6.0,0.5);         //Drive backward 6.5 inches
+            
+            //delay(1000);                             //Wait for 0.5 seconds
 
-            theArm.unfold();                        //set the arm to unfold position
-            delay(1500);                             //wait for 1.5 seconds
+            unfold();                        //set the arm to unfold position
+            //delay(1500);                             //wait for 1.5 seconds
 
-            theArm.unfold();                        //set the arm to unfold position
-            delay(1500);                             //wait 1.5 seconds
+            //theArm.unfold();                        //set the arm to unfold position
+            //delay(1500);                             //wait 1.5 seconds
             
             theIntake.openDumpServo();              //open the dump servo
             //theArm.unfold();                        //set the arm to unfold position
@@ -75,14 +77,14 @@ public class AutonCrater extends LinearOpMode{
             
 // 4,6  pick up center mineral and deliver
 
-            theArm.pickUp();                        //move arm to pick up position*/
-            delay (1000);
+            pickUp();                        //move arm to pick up position*/
+            //delay (1000);
 
             theIntake.driveCombine(true,false);
             delay (1000);
 
-            theChassis.driveAuton(-2,0.5);        //Drive forward 2 inches to pick up mineral
-            delay(1000);                             //Wait 1 seconds
+            driveAuton(-2,0.5);        //Drive forward 2 inches to pick up mineral
+            //delay(1000);                             //Wait 1 seconds
 
             theIntake.driveCombine(false,false);
             delay (500);
@@ -108,15 +110,17 @@ public class AutonCrater extends LinearOpMode{
 
             theIntake.closeDumpServo();
         */  
-            theArm.middle ();
-            delay (2000);                           //wait for 2 seconds
+            middle ();
+            //delay (2000);                           //wait for 2 seconds
 
 // drive into the crater for the end of the match
 
             theWheeliebar.wheeliebar_RB_middle();
-            theChassis.driveAuton(-12.0,0.5);         //Drive backward 22 inches toward the crater
-            theArm.middle ();
-            delay(2000);                             //Wait for 2.0 seconds to make sure wheelie bars are up.
+            driveAuton(-12.0,0.5);
+
+            //Drive backward 22 inches toward the crater
+            middle();
+            //delay(2000);                             //Wait for 2.0 seconds to make sure wheelie bars are up.
             
             //theChassis.driveAuton(-5.0,0.5);         //Drive backward 14 inches to go into the crater
             //theArm.middle ();
@@ -134,10 +138,33 @@ public class AutonCrater extends LinearOpMode{
               telemetry.addData("Pot_Voltage", theHardwarePlatter.armPotentiometer.getVoltage());
               theArm.display(telemetry);
               telemetry.update();
-              if(theArm.isMoving()) theArm.moveOrHoldPosition();
-              sleep(100);
+              theArm.moveOrHoldPosition();
             }
             theArm.stop();
-        }    
-        
-}
+            theChassis.stop();
+        }  
+        void unfold() {
+            theArm.unfold();
+            while(opModeIsActive() && theArm.moveOrHoldPosition());
+        }
+        void middle() {
+            theArm.middle();
+            while(opModeIsActive() && theArm.moveOrHoldPosition());
+        }
+         void release() {
+            theArm.release();
+            while(opModeIsActive() && theArm.moveOrHoldPosition());
+        }
+         void pickUp() {
+            theArm.pickUp();
+            while(opModeIsActive() && theArm.moveOrHoldPosition());
+        }
+         void drive() {
+            theArm.drive();
+            while(opModeIsActive() && theArm.moveOrHoldPosition());
+        }
+        void driveAuton(double distance, double speed) {
+            theChassis.driveAuton(distance, speed);
+            while(opModeIsActive() && theChassis.isDriveBusy()) { }
+        }
+    }

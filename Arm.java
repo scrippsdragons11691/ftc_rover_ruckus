@@ -117,11 +117,12 @@ public class Arm {
         }
     }
 
-    void moveOrHoldPosition() {
+    boolean moveOrHoldPosition() {
         if(is_moving)
             gotoPosition();
         else
             stop();
+        return(is_moving);
     }
     
     boolean isMoving() {
