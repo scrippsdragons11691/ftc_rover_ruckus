@@ -14,9 +14,10 @@ public class AutonCrater extends LinearOpMode {
     ElevatorClimb theElevatorClimb;
     ClawLatch theClawLatch;
     Wheeliebar theWheeliebar;
+    Sampler theSampler;
 
     public void runOpMode() {
-
+        theSampler = new Sampler(hardwareMap);
         theHardwarePlatter = new HardwarePlatter(hardwareMap);
         theChassis = new ChassisAuton(theHardwarePlatter);
         theArm = new Arm(theHardwarePlatter);
@@ -31,9 +32,9 @@ public class AutonCrater extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
+        int LeftRightCenter = theSampler.sampleMinerals();
 
-
-        if(opModeIsActive()) {
+        if (opModeIsActive()) {
 
             //1) Land and unlatch from lander
  /*           theClawLatch.closeAuton();
@@ -53,37 +54,34 @@ public class AutonCrater extends LinearOpMode {
 
             theElevatorClimb.climberStop();
             drive();                         //Set the arm at a 90 degree angle (drive position)
-            //delay(2000);                             //Wait 1 second
 
             driveAuton(6.0, 0.5);         //Drive backward 6.5 inches
 
-            //delay(1000);                             //Wait for 0.5 seconds
-
             unfold();                        //set the arm to unfold position
-            //delay(1500);                             //wait for 1.5 seconds
-
-            //theArm.unfold();                        //set the arm to unfold position
-            //delay(1500);                             //wait 1.5 seconds
 
             theIntake.openDumpServo();              //open the dump servo
-            //theArm.unfold();                        //set the arm to unfold position
+
             delay(1500);                             //wait 0.5 seconds
 
             theIntake.closeDumpServo();
-            //theArm.unfold();                        //set the arm to unfold position
-            sleep(500);
 
+            delay(500);
 
 // 4,6  pick up center mineral and deliver
 
             pickUp();                        //move arm to pick up position*/
-            //delay (1000);
+
+            if (LeftRightCenter == -1) {
+                rotateAuton(-2.75, 0.5);
+            } else if (LeftRightCenter == 1) {
+                theChassis.rotate(-1);
+                delay(250);
+            }
 
             theIntake.driveCombine(true, false);
             delay(1000);
 
-            driveAuton(-2, 0.5);        //Drive forward 2 inches to pick up mineral
-            //delay(1000);                             //Wait 1 seconds
+            driveAuton(-2, 0.5);        //Drive forward 2 inches to pick up mineral             //Wait 1 seconds
 
             theIntake.driveCombine(false, false);
             delay(500);
@@ -173,5 +171,10 @@ public class AutonCrater extends LinearOpMode {
         theChassis.driveAuton(distance, speed);
         while (opModeIsActive() && theChassis.isDriveBusy()) {
         }
+    }
+
+    void rotateAuton(double distance, double speed) {
+        theChassis.rotateAuton(distance, speed);
+        while(opModeIsActive() && theChassis.isDriveBusy());
     }
 }

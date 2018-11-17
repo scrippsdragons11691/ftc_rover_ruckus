@@ -1,47 +1,47 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
-
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+
 import java.util.List;
+
 public class Sampler {
 
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
     private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
-    String goldPosition;
-
     private static final String VUFORIA_KEY = "AflGIy7/////AAABmZXaLZsv6UzSvUDR0RWPvVUzj8tTQmJLenJJdIMfK4GIxwpSxXn0AI1YWVh5fXHcH1Rb8s7xjynA0e7+eNrn0x/yYbU3O09RIgqZLPCcq3eeGMFoCn5IdADLdWMXG6CGCpgE+o5OVdbQMJO2Z0a4vTqr5rVymQk88lt/dlq1q4Fhbr/1iGMxecXvYx4D1SJ+d3Eqdy+ss9zO45pqkFR1nhN01vTN1LgB1ZKPfNoQBl+F/Z1gfg5BFgqHu5y0ziqu9cx1mVuBr7/ZaMPAtwqh8BzOTt2YlH641a12GQ7K3OtqsMU9btnwjaz6fBjWz8JeZ/TQmO+kprKi0gHT2PYRCX6UASN4Cn6WKflYW8/eaBGl ";
-
+    String goldPosition;
+    HardwareMap theHardwareMap;
+    int goldMineralPosition = 0;
+    int numMinerals = 0;
     private VuforiaLocalizer vuforia;       //the variable we will use to store our instance of the Vuforia localization engine.
     private TFObjectDetector tfod;          //the variable we will use to store our instance of the Tensor Flow Object Detection engine.
 
-    HardwareMap     theHardwareMap;
-    int             goldMineralPosition = 2;
-    int             numMinerals = 0;
-
     public Sampler(HardwareMap hwMap) {
-        theHardwareMap     = hwMap;
+        theHardwareMap = hwMap;
     }
-    void activate(){
+
+    void activate() {
         /** Activate Tensor Flow Object Detection. */
         if (tfod != null) {
             tfod.activate();
         }
     }
 
-    void deactivate(){
+    void deactivate() {
         if (tfod != null) {
             tfod.shutdown();
         }
     }
 
-    void sampleMinerals() {
+    int sampleMinerals() {
 
 
         if (tfod != null) {
@@ -56,25 +56,30 @@ public class Sampler {
                     float firstLeft = updatedRecognitions.get(0).getLeft();
                     float secondLeft = updatedRecognitions.get(1).getLeft();
                     int first_index = 0, second_index = 1;
-                    if(firstLeft > secondLeft)
-                    {
-                        first_index = 1; second_index = 0;
+                    if (firstLeft > secondLeft) {
+                        first_index = 1;
+                        second_index = 0;
                     }
-                    if(updatedRecognitions.get(first_index).getLabel().equals(LABEL_GOLD_MINERAL))
+                    if (updatedRecognitions.get(first_index).getLabel().equals(LABEL_GOLD_MINERAL))
+                    {
                         goldPosition = "left";
-                    else if(updatedRecognitions.get(second_index).getLabel().equals(LABEL_GOLD_MINERAL))
+                        goldMineralPosition = -1;
+                    }
+                    else if (updatedRecognitions.get(second_index).getLabel().equals(LABEL_GOLD_MINERAL)) {
                         goldPosition = "center";
-                    else
+                        goldMineralPosition = 0;
+                    }
+                    else {
                         goldPosition = "right";
-
+                        goldMineralPosition = 1;
+                    }
 
                 }
             }
 
         }
+        return(goldMineralPosition);
     }
-
-
 
 
     /**
