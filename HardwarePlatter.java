@@ -21,7 +21,9 @@ public class HardwarePlatter {
 
     public DcMotor elevatorDrive;
     public Servo   clawServo;
-    public TouchSensor  climberLimitSw;
+    public TouchSensor  climberLimitSwUp;
+    public TouchSensor  climberLimitSwDn;
+
 
     public Servo dumpServo;
 
@@ -32,7 +34,11 @@ public class HardwarePlatter {
     
     public Servo markerServo;
     
-
+    public DcMotor wheelieBar;
+    
+    public AnalogInput wheeliebarPot;
+    
+    
     public HardwarePlatter(HardwareMap hMap){
         leftFrontDrive = (DcMotor)hMap.get("left_front_drive");
         rightFrontDrive = (DcMotor)hMap.get("right_front_drive");
@@ -43,15 +49,19 @@ public class HardwarePlatter {
         dumpServo = (Servo)hMap.get("dump_servo");
         elevatorDrive = (DcMotor)hMap.get("elevator_climb");
         combineDrive = (DcMotor)hMap.get("combine_drive");
-        climberLimitSw = (TouchSensor)hMap.get("climber_limit_sw");
+        climberLimitSwUp = (TouchSensor)hMap.get("climber_limit_sw_up");
+        climberLimitSwDn = (TouchSensor)hMap.get("climber_limit_sw_dn");
         clawServo = (Servo)hMap.get("claw_servo");
-        wheeliebarRightServo = (Servo)hMap.get("wheeliebarRight");
-        wheeliebarLeftServo = (Servo)hMap.get("wheeliebarLeft");
+        //wheeliebarRightServo = (Servo)hMap.get("wheeliebarRight");
+        //wheeliebarLeftServo = (Servo)hMap.get("wheeliebarLeft");
         imu          = hMap.get(BNO055IMU.class, "imu");
         markerServo = (Servo)hMap.get("marker_servo");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         imu.initialize(parameters);
+        wheelieBar = (DcMotor)hMap.get("wheelie_bar");
+        wheeliebarPot = (AnalogInput)hMap.get("wheeliebar_pot");
+        
     }
 }

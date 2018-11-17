@@ -28,7 +28,7 @@ public class ElevatorClimb {
         theHardwarePlatter.elevatorDrive.setPower(-1);
     }    
     void dropDownAuto() {                                   //elevator goes up
-        if (!theHardwarePlatter.climberLimitSw .isPressed())
+        if (!theHardwarePlatter.climberLimitSwUp.isPressed())
             theHardwarePlatter.elevatorDrive.setPower(1);
         else 
             climberStop(); 

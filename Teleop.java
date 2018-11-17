@@ -136,7 +136,7 @@ public class Teleop extends LinearOpMode {
                 
            if (gamepad1.left_trigger > 0.1 ) elevatorClimbset = true;
            if (elevatorClimbset)
-               if (!theHardwarePlatter.climberLimitSw .isPressed())
+               if (!theHardwarePlatter.climberLimitSwUp.isPressed())
                   theElevatorClimb.dropDownAuto();
                   else elevatorClimbset = false;
 

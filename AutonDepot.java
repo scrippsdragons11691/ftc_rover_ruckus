@@ -44,41 +44,115 @@ public class AutonDepot extends LinearOpMode {
 
         while(opModeIsActive()) {
         
+    //0) Sample minerals -1 is left, 1 Right, 0 Center
+        int LeftRightCenter = -1;
+    
     //1) Land and unlatch from lander
     
             theElevatorClimb.dropDown();        // robot goes up to release the latch
             delay(750);
             theElevatorClimb.climberStop();   //stops the climber motor
             theElevatorClimb.climbUpAuton();  //robot drops down
-            delay(5000);
+            delay(3500);
             theElevatorClimb.climberStop();   // Stops motor
     
-
-    //drive to deliver the marker to the Crater 
-    
-        // to rotate motor speed 0.5 for 0.5 sec = 45 deg
-
-            theChassis.driveAuton(-20.0,0.5);       // Drive backward 22 inches toward the crater
-            delay(1500);                            // Wait 1.0 seconds
-
-            theChassis.rotateAuton(7,0.5);         // Rotate to drop the marker
-            //theElevatorClimb.dropDown();             // Reset the climber position  
-            delay(2000);
-
-            theElevatorClimb.climberStop();
-            theMarkerServo.markerServo_down();      // Drop marker
-            delay (1000);
-
-            theChassis.rotateAuton(2,0.5);          // Rotate to the crater
+    //2.1) Move the Cube for left
+        
+        if (LeftRightCenter == -1) {
+            theChassis.rotateAuton(-2.75,0.5);         // Rotate toward the mineral
             delay(750);
-
-            theChassis.driveAuton(-33,0.8);        // Drive forward 35 inches
+            theChassis.driveAuton(-20.0,0.5);       // Drive backward 20 inches toward the crater 
+            delay(1500); 
+            theChassis.rotateAuton(6,0.5);          // Rotate to the crater
+            delay(750);
+            
+    //3.1) Drop Marker after left
+    
+            theChassis.driveAuton(-20.0,0.5);       // Drive backward 20 inches toward the crater 
+            delay(1500); 
+            theMarkerServo.markerServo_down();      // Drop marker
+            delay(750);
+    
+    //4) Drive to Crater after left
+    
+            theChassis.driveAuton(33,0.8);        // Drive forward 35 inches
             theMarkerServo.markerServo_up();      // raise marker
+            delay(1500);
+            theChassis.rotateAuton(-11.5,0.5);         // Rotate toward the mineral
+            delay(1000); 
+            theChassis.driveAuton(-8,0.8);
+        }
+        
+    //2.2)  Move the Cube for Center
+            
+            else if (LeftRightCenter == 0){
+            
+            theChassis.driveAuton(-26.0,0.5);       // Drive backward 20 inches toward the crater 
+            delay(200); 
+            theChassis.rotateAuton(4.75,0.5);  
+            delay(200);
+            theChassis.driveAuton(-5,0.5);       // Drive backward 20 inches toward the crater 
+            // Rotate to the crater
+            delay(200);
+            
+    //3.1) Drop Marker after center
+    
+            theMarkerServo.markerServo_down();      // Drop marker
+            delay(300);
+    
+    //4) Drive to Crater after center
+            theMarkerServo.markerServo_up();      // raise marker
+            theChassis.driveAuton(18,0.4);        // Drive forward 35 inches
+            delay(500);
+            theChassis.rotateAuton(-1.5,0.5);         // Rotate toward the mineral
+            delay(200); 
+            theChassis.driveAuton(15,0.8);        // Drive forward 35 inches
+            delay(200);
+            theMarkerServo.markerServo_up();      // raise marker
+            theChassis.rotateAuton(-12,0.5);         // Rotate toward the mineral
+            delay(200); 
+            theChassis.driveAuton(-8,0.8);
+        }
+        
+        //2.1) Move the Cube for right
+        
+        else if (LeftRightCenter == 1) {
+            
+            theChassis.rotateAuton(2.5,0.4);         // Rotate toward the mineral
+            delay(100);
+            theChassis.driveAuton(-21.5,0.3);       // Drive backward 20 inches toward the crater 
+            delay(100); 
+
+            
+    //3.1) Drop Marker after right
+            theChassis.rotateAuton(-5.25,0.4);          // Rotate to the crater
+            delay(100);
+            theChassis.driveAuton(-14,0.3);       // Drive backward 20 inches toward the crater 
+            delay(100); 
+            theChassis.rotateAuton(7.,.4);          // Rotate to the crater
+            delay(100);
+            theMarkerServo.markerServo_down();      // Drop marker
+            delay(500);
+    
+    //4) Drive to Crater after right
+    
+            theMarkerServo.markerServo_up();      // raise marker
+            theChassis.driveAuton(18,0.4);        // Drive forward 35 inches
+            delay(500);
+            theChassis.rotateAuton(-1,0.4);         // Rotate toward the mineral
+            delay(200); 
+            theChassis.driveAuton(16,0.8);        // Drive forward 35 inches
+            delay(200);
+            theMarkerServo.markerServo_up();      // raise marker
+            theChassis.rotateAuton(-12,0.4);         // Rotate toward the mineral
+            delay(200); 
+            theChassis.driveAuton(-8,0.8);
+        }
+          
+        // 5 ) Unfold the arms into the Crater
+            
             theClawLatch.autoClose();              // close the claw latch to allow arm to rotate
-            delay(4000);
-
-
-        // 2, 3 ) Unfold the arms into the Crater
+            delay(750);
 
             theArm.drive();                         //Set the arm at a 90 degree angle (drive position)
             delay(2000);                             //Wait 2 second
