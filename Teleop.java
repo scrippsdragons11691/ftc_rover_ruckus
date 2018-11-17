@@ -36,16 +36,28 @@ public class Teleop extends LinearOpMode {
 
 
             
-        //Drive Control
+        //Drive Control (Split-Arcade)
+            
             double boost;  // Slow down drive for better control
             if(gamepad1.left_bumper)
                 boost = 0.5;
             else
                 boost = 1.0;
-            double speed = Math.pow(-gamepad1.left_stick_y, 3) * boost;
-            double turn  = Math.pow(gamepad1.right_stick_x, 3) * boost;
+            double speed = Math.pow(-gamepad1.left_stick_y, 1) * boost;
+            double turn  = Math.pow(gamepad1.right_stick_x, 1) * boost;
             theChassis.drive(speed, turn);
             
+
+        //Drive Control (Tank Drive)
+        /*    double boost;  // Slow down drive for better control
+            if(gamepad1.left_bumper)
+                boost = 0.5;
+            else
+                boost = 1.0;
+            double leftDrive = Math.pow(gamepad1.left_stick_y, 3) * boost;
+            double rightDrive  = Math.pow(gamepad1.right_stick_y, 3) * boost;
+            theChassis.driveTank(leftDrive, rightDrive);
+            */
             theIntake.driveCombine(gamepad2.dpad_up, gamepad2.dpad_down);
 
         //Arm Control

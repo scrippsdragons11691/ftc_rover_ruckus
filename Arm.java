@@ -6,13 +6,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class Arm {
 
-    static final double INTAKE_DRIVE_SPEED      = 1.0;
-    static final double ARM_HOLD_VOLTS          = 0.05;
-    static final double POS_TOLERANCE           = 0.05;
+    static final double INTAKE_DRIVE_SPEED      = .75;
+    static final double ARM_HOLD_VOLTS          = 0.1;
+    static final double POS_TOLERANCE           = 0.025;
     static final double UNFOLD_POSITION_VOLTS   = 3.3;
     static final double PICKUP_POSITION_VOLTS   = 3.05;
     static final double DRIVE_POSITION_VOLTS    = 1.15;
-    static final double RELEASE_POSITION_VOLTS  = 0.85;
+    static final double RELEASE_POSITION_VOLTS  = 0.9;
     static final double MIDDLE_POSITION_VOLTS  = 2.50;
 
     HardwarePlatter theHardwarePlatter;

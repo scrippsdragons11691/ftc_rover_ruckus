@@ -32,9 +32,22 @@ public class Chassis {
         theHardwarePlatter.leftBackDrive.setPower(leftBackPower);
         theHardwarePlatter.rightBackDrive.setPower(rightBackPower);
     }
+    public void driveTank(double leftDrive, double rightDrive){
+            
+        double leftFrontPower = Range.clip(leftDrive, -1.0, 1.0);
+        double rightFrontPower = Range.clip(rightDrive, -1.0, 1.0);
+        double leftBackPower = Range.clip(leftDrive, -1.0, 1.0);
+        double rightBackPower = Range.clip(rightDrive, -1.0, 1.0);
+                
+        theHardwarePlatter.leftFrontDrive.setPower(leftFrontPower);
+        theHardwarePlatter.rightFrontDrive.setPower(rightFrontPower);
+        theHardwarePlatter.leftBackDrive.setPower(leftBackPower);
+        theHardwarePlatter.rightBackDrive.setPower(rightBackPower);
+    }
     
     void display(Telemetry telemetry) {
         telemetry.addData("LF", theHardwarePlatter.leftFrontDrive.getPower());
     }
-
+    
+    
 }

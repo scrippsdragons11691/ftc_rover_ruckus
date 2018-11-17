@@ -45,21 +45,21 @@ public class AutonDepot extends LinearOpMode {
         while(opModeIsActive()) {
         
     //1) Land and unlatch from lander
-    /*
+    
             theElevatorClimb.dropDown();        // robot goes up to release the latch
             delay(750);
             theElevatorClimb.climberStop();   //stops the climber motor
             theElevatorClimb.climbUpAuton();  //robot drops down
             delay(5000);
             theElevatorClimb.climberStop();   // Stops motor
-    */
+    
 
     //drive to deliver the marker to the Crater 
     
         // to rotate motor speed 0.5 for 0.5 sec = 45 deg
 
-            driveAuton(-20.0,0.5);       // Drive backward 22 inches toward the crater
-            //delay(1500);                            // Wait 1.0 seconds
+            theChassis.driveAuton(-20.0,0.5);       // Drive backward 22 inches toward the crater
+            delay(1500);                            // Wait 1.0 seconds
 
             theChassis.rotateAuton(7,0.5);         // Rotate to drop the marker
             //theElevatorClimb.dropDown();             // Reset the climber position  
@@ -72,34 +72,32 @@ public class AutonDepot extends LinearOpMode {
             theChassis.rotateAuton(2,0.5);          // Rotate to the crater
             delay(750);
 
-            driveAuton(-33,0.8);
-            // Drive forward 35 inches
+            theChassis.driveAuton(-33,0.8);        // Drive forward 35 inches
+            theMarkerServo.markerServo_up();      // raise marker
             theClawLatch.autoClose();              // close the claw latch to allow arm to rotate
-            //delay(4000);
+            delay(4000);
 
 
         // 2, 3 ) Unfold the arms into the Crater
 
-            drive();                         //Set the arm at a 90 degree angle (drive position)
-            //delay(2000);                             //Wait 2 second
-           
+            theArm.drive();                         //Set the arm at a 90 degree angle (drive position)
+            delay(2000);                             //Wait 2 second
 
-            unfold();
-            //set the arm to unfold position
+            theArm.unfold();                        //set the arm to unfold position
             theClawLatch.autoOpen();                //Reset climber Hook Position
             delay(1500);                            //wait for 1.5 seconds
 
-            unfold();                        //set the arm to unfold position into the crater
-            //delay(1500);                            //wait 1.5 seconds
+            theArm.unfold();                        //set the arm to unfold position into the crater
+            delay(1500);                            //wait 1.5 seconds
 
             theIntake.openDumpServo();              //open the dump servo
             delay(1000);                            //wait 1 seconds
 
             theIntake.closeDumpServo();
 
-            middle ();
+            theArm.middle ();
             theClawLatch.autoOpen();
-           // delay(10000);                             //Wait for 10 seconds or for auton to end
+            delay(10000);                             //Wait for 10 seconds or for auton to end
     
             }   
         }
@@ -118,32 +116,10 @@ public class AutonDepot extends LinearOpMode {
               theArm.display(telemetry);
               theChassis.isGyroBusy();
               telemetry.update();
-              theArm.moveOrHoldPosition();
+              if(theArm.isMoving()) theArm.moveOrHoldPosition();
+              sleep(100);
             }
             theArm.stop();
-        } 
-        void unfold() {
-            theArm.unfold();
-            while(opModeIsActive() && theArm.moveOrHoldPosition());
-        }
-        void middle() {
-            theArm.middle();
-            while(opModeIsActive() && theArm.moveOrHoldPosition());
-        }
-         void release() {
-            theArm.release();
-            while(opModeIsActive() && theArm.moveOrHoldPosition());
-        }
-         void pickUp() {
-            theArm.pickUp();
-            while(opModeIsActive() && theArm.moveOrHoldPosition());
-        }
-         void drive() {
-            theArm.drive();
-            while(opModeIsActive() && theArm.moveOrHoldPosition());
-        }
-        void driveAuton(double distance, double speed) {
-            theChassis.driveAuton(distance, speed);
-            while(opModeIsActive() && theChassis.isDriveBusy()) { }
-        }
+        }    
+        
 }

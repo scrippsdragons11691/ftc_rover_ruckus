@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous
-
-public class AutonCrater extends LinearOpMode{
+public class AutonCrater extends LinearOpMode {
 
     ChassisAuton theChassis;
     HardwarePlatter theHardwarePlatter;
@@ -15,9 +14,9 @@ public class AutonCrater extends LinearOpMode{
     ElevatorClimb theElevatorClimb;
     ClawLatch theClawLatch;
     Wheeliebar theWheeliebar;
-    
+
     public void runOpMode() {
-        
+
         theHardwarePlatter = new HardwarePlatter(hardwareMap);
         theChassis = new ChassisAuton(theHardwarePlatter);
         theArm = new Arm(theHardwarePlatter);
@@ -25,18 +24,18 @@ public class AutonCrater extends LinearOpMode{
         theElevatorClimb = new ElevatorClimb(theHardwarePlatter);
         theClawLatch = new ClawLatch(theHardwarePlatter);
         theWheeliebar = new Wheeliebar(theHardwarePlatter);
-        
+
         //theWheeliebar.wheeliebar_RB_down();
 
         telemetry.addData("robot", "initialized");
         telemetry.update();
 
         waitForStart();
-        
 
-        while(opModeIsActive()) {
-        
-        //1) Land and unlatch from lander
+
+        if(opModeIsActive()) {
+
+            //1) Land and unlatch from lander
  /*           theClawLatch.closeAuton();
             theElevatorClimb.dropDown();        // robot goes up to release the latch
             delay(750);
@@ -44,9 +43,9 @@ public class AutonCrater extends LinearOpMode{
             theElevatorClimb.climbUpAuton();    //robot drops down
             delay(5000);
             theElevatorClimb.climberStop();     // Stops motor
- */           
-        // 2, 3 ) Unfold the arms
-            driveAuton(-6.5,0.5);
+ */
+            // 2, 3 ) Unfold the arms
+            driveAuton(-6.5, 0.5);
             //Drive forward 6.5 inches
             theWheeliebar.wheeliebar_RB_down();
             theElevatorClimb.dropDown();         // Reset the climber position     
@@ -56,8 +55,8 @@ public class AutonCrater extends LinearOpMode{
             drive();                         //Set the arm at a 90 degree angle (drive position)
             //delay(2000);                             //Wait 1 second
 
-            driveAuton(6.0,0.5);         //Drive backward 6.5 inches
-            
+            driveAuton(6.0, 0.5);         //Drive backward 6.5 inches
+
             //delay(1000);                             //Wait for 0.5 seconds
 
             unfold();                        //set the arm to unfold position
@@ -65,29 +64,29 @@ public class AutonCrater extends LinearOpMode{
 
             //theArm.unfold();                        //set the arm to unfold position
             //delay(1500);                             //wait 1.5 seconds
-            
+
             theIntake.openDumpServo();              //open the dump servo
             //theArm.unfold();                        //set the arm to unfold position
             delay(1500);                             //wait 0.5 seconds
 
             theIntake.closeDumpServo();
             //theArm.unfold();                        //set the arm to unfold position
-            sleep(500); 
-            
-            
+            sleep(500);
+
+
 // 4,6  pick up center mineral and deliver
 
             pickUp();                        //move arm to pick up position*/
             //delay (1000);
 
-            theIntake.driveCombine(true,false);
-            delay (1000);
+            theIntake.driveCombine(true, false);
+            delay(1000);
 
-            driveAuton(-2,0.5);        //Drive forward 2 inches to pick up mineral
+            driveAuton(-2, 0.5);        //Drive forward 2 inches to pick up mineral
             //delay(1000);                             //Wait 1 seconds
 
-            theIntake.driveCombine(false,false);
-            delay (500);
+            theIntake.driveCombine(false, false);
+            delay(500);
          /*   
             //theChassis.turn(30);
             theArm.drive(); 
@@ -109,62 +108,70 @@ public class AutonCrater extends LinearOpMode{
             delay(1000);                             //wait for 1.0 seconds
 
             theIntake.closeDumpServo();
-        */  
-            middle ();
+        */
+            middle();
             //delay (2000);                           //wait for 2 seconds
 
 // drive into the crater for the end of the match
 
             theWheeliebar.wheeliebar_RB_middle();
-            driveAuton(-12.0,0.5);
+            driveAuton(-12.0, 0.5);
 
             //Drive backward 22 inches toward the crater
             middle();
             //delay(2000);                             //Wait for 2.0 seconds to make sure wheelie bars are up.
-            
+
             //theChassis.driveAuton(-5.0,0.5);         //Drive backward 14 inches to go into the crater
             //theArm.middle ();
             delay(10000);                             //Wait for 10 seconds for auton to end
-        }   
-        }
-        void delay(int timeout_ms){
-            ElapsedTime runtime = new ElapsedTime();
-            runtime.reset();
-              while(opModeIsActive() && (runtime.time() < timeout_ms/1000.0)) {
-              //sleep(timeout_ms);
-              telemetry.addData("Encoders_run", theHardwarePlatter.elevatorDrive.getCurrentPosition());
-              telemetry.addData("time", runtime.time());
-              telemetry.addData("timeout", timeout_ms);
-              telemetry.addData("Pot_Voltage", theHardwarePlatter.armPotentiometer.getVoltage());
-              theArm.display(telemetry);
-              telemetry.update();
-              theArm.moveOrHoldPosition();
-            }
-            theArm.stop();
-            theChassis.stop();
-        }  
-        void unfold() {
-            theArm.unfold();
-            while(opModeIsActive() && theArm.moveOrHoldPosition());
-        }
-        void middle() {
-            theArm.middle();
-            while(opModeIsActive() && theArm.moveOrHoldPosition());
-        }
-         void release() {
-            theArm.release();
-            while(opModeIsActive() && theArm.moveOrHoldPosition());
-        }
-         void pickUp() {
-            theArm.pickUp();
-            while(opModeIsActive() && theArm.moveOrHoldPosition());
-        }
-         void drive() {
-            theArm.drive();
-            while(opModeIsActive() && theArm.moveOrHoldPosition());
-        }
-        void driveAuton(double distance, double speed) {
-            theChassis.driveAuton(distance, speed);
-            while(opModeIsActive() && theChassis.isDriveBusy()) { }
         }
     }
+
+    void delay(int timeout_ms) {
+        ElapsedTime runtime = new ElapsedTime();
+        runtime.reset();
+        while (opModeIsActive() && (runtime.time() < timeout_ms / 1000.0)) {
+            //sleep(timeout_ms);
+            telemetry.addData("Encoders_run", theHardwarePlatter.elevatorDrive.getCurrentPosition());
+            telemetry.addData("time", runtime.time());
+            telemetry.addData("timeout", timeout_ms);
+            telemetry.addData("Pot_Voltage", theHardwarePlatter.armPotentiometer.getVoltage());
+            theArm.display(telemetry);
+            telemetry.update();
+            theArm.moveOrHoldPosition();
+        }
+        theArm.stop();
+        theChassis.stop();
+    }
+
+    void unfold() {
+        theArm.unfold();
+        while (opModeIsActive() && theArm.moveOrHoldPosition()) ;
+    }
+
+    void middle() {
+        theArm.middle();
+        while (opModeIsActive() && theArm.moveOrHoldPosition()) ;
+    }
+
+    void release() {
+        theArm.release();
+        while (opModeIsActive() && theArm.moveOrHoldPosition()) ;
+    }
+
+    void pickUp() {
+        theArm.pickUp();
+        while (opModeIsActive() && theArm.moveOrHoldPosition()) ;
+    }
+
+    void drive() {
+        theArm.drive();
+        while (opModeIsActive() && theArm.moveOrHoldPosition()) ;
+    }
+
+    void driveAuton(double distance, double speed) {
+        theChassis.driveAuton(distance, speed);
+        while (opModeIsActive() && theChassis.isDriveBusy()) {
+        }
+    }
+}

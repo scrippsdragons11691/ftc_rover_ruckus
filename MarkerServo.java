@@ -4,7 +4,7 @@ package org.firstinspires.ftc.teamcode;
 public class MarkerServo {
 
 
-        static final double INITIALIZE_POSITION              = 0;
+        static final double INITIALIZE_POSITION              = 0.5;
         static final double MARKER_DOWN_POSITION      = 1;
         static final double MARKER_UP_POSITION    = 0.5;
         
