@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -21,9 +20,6 @@ public class ChassisAuton {
 
     private ElapsedTime runtime = new ElapsedTime();
     HardwarePlatter theHardwarePlatter;
-    double gyroTarget;
-    double headingResetValue;
-    boolean isTurning = false;
     double powerSetpoint = 0.1;
     double error;
 
@@ -137,31 +133,6 @@ public class ChassisAuton {
         
     }
 
-    private double getAbsoluteHeading() {
-        return theHardwarePlatter.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-    }
-
-    private double getRelativeHeading() {
-        return this.getAbsoluteHeading() - this.headingResetValue;
-    }
-
-    boolean isGyroBusy() {
-        if(isTurning) {
-            error = gyroTarget - getAbsoluteHeading();
-            
-            if(Math.abs(error) > 1.0) {
-                if(error > 0) {
-                    rotate(-powerSetpoint);
-                } else {
-                    rotate(+powerSetpoint);
-                }
-            } else {
-                isTurning = false;
-                rotate(0);
-            }
-        }
-        return(isTurning);
-    }
     public boolean isDriveBusy() {
         if(!theHardwarePlatter.leftBackDrive.isBusy() || !theHardwarePlatter.rightBackDrive.isBusy()) {
             // Stop all motion;
@@ -176,13 +147,6 @@ public class ChassisAuton {
         }
     }
 
-    public void turn(double angledegrees, double power) {
-        gyroTarget = angledegrees + getAbsoluteHeading();
-        isTurning = true;
-        powerSetpoint = power;
-    }
-    
-
     void rotate(double power) {
         theHardwarePlatter.leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         theHardwarePlatter.rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -194,15 +158,8 @@ public class ChassisAuton {
         theHardwarePlatter.rightBackDrive.setPower(-power);
     }
     
-    boolean isTurning() {
-        return(isTurning);
-    }
-    
     void display(Telemetry telemetry) {
-        telemetry.addData("gyro rel heading - actual", getRelativeHeading());
-        telemetry.addData("gyro target", gyroTarget);
-        telemetry.addData("gyro abs heading", getAbsoluteHeading());
-        telemetry.addData("gyro error", error);
+
     }
     
     void stop() {

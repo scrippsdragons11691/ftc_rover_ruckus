@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @TeleOp
@@ -36,28 +37,16 @@ public class Teleop extends LinearOpMode {
 
 
             
-        //Drive Control (Split-Arcade)
-            
+        //Drive Control
             double boost;  // Slow down drive for better control
             if(gamepad1.left_bumper)
                 boost = 0.5;
             else
                 boost = 1.0;
-            double speed = Math.pow(-gamepad1.left_stick_y, 1) * boost;
-            double turn  = Math.pow(gamepad1.right_stick_x, 1) * boost;
+            double speed = Math.pow(-gamepad1.left_stick_y, 3) * boost;
+            double turn  = Math.pow(gamepad1.right_stick_x, 3) * boost;
             theChassis.drive(speed, turn);
             
-
-        //Drive Control (Tank Drive)
-        /*    double boost;  // Slow down drive for better control
-            if(gamepad1.left_bumper)
-                boost = 0.5;
-            else
-                boost = 1.0;
-            double leftDrive = Math.pow(gamepad1.left_stick_y, 3) * boost;
-            double rightDrive  = Math.pow(gamepad1.right_stick_y, 3) * boost;
-            theChassis.driveTank(leftDrive, rightDrive);
-            */
             theIntake.driveCombine(gamepad2.dpad_up, gamepad2.dpad_down);
 
         //Arm Control
@@ -136,22 +125,24 @@ public class Teleop extends LinearOpMode {
                 
            if (gamepad1.left_trigger > 0.1 ) elevatorClimbset = true;
            if (elevatorClimbset)
-               if (!theHardwarePlatter.climberLimitSwUp.isPressed())
+               if (!theHardwarePlatter.climberLimitSwUp .isPressed())
                   theElevatorClimb.dropDownAuto();
                   else elevatorClimbset = false;
-
+            
+ 
         // Wheelie Bar Control
             if(gamepad1.right_bumper) {
-                theWheeliebar.wheeliebar_RB_down();
+                theWheeliebar.down();
             }
-            else{
-                theWheeliebar.wheeliebar_RB_middle();
+            else if(gamepad1.left_bumper) {
+                theWheeliebar.up();
             }
             
         // Telemetry
             telemetry.addData("dump servo", theHardwarePlatter.dumpServo.getPosition());
             telemetry.addData("arm", gamepad2.right_stick_y);
             theArm.display(telemetry);
+            theWheeliebar.display(telemetry);
             theClawLatch.display(telemetry);
             telemetry.update();
         }

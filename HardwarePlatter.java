@@ -52,8 +52,6 @@ public class HardwarePlatter {
         climberLimitSwUp = (TouchSensor)hMap.get("climber_limit_sw_up");
         climberLimitSwDn = (TouchSensor)hMap.get("climber_limit_sw_dn");
         clawServo = (Servo)hMap.get("claw_servo");
-        //wheeliebarRightServo = (Servo)hMap.get("wheeliebarRight");
-        //wheeliebarLeftServo = (Servo)hMap.get("wheeliebarLeft");
         imu          = hMap.get(BNO055IMU.class, "imu");
         markerServo = (Servo)hMap.get("marker_servo");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();

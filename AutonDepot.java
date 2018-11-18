@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -34,6 +35,14 @@ public class AutonDepot extends LinearOpMode {
         telemetry.update();
 
         theMarkerServo.markerServo_initialized();
+        theSampler.initVuforia();
+
+        if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
+            theSampler.initTfod();
+        } else {
+            telemetry.addData("Sorry!", "This device is not compatible with TFOD");
+        }
+        theSampler.activate();
 
         waitForStart();
 
@@ -42,15 +51,18 @@ public class AutonDepot extends LinearOpMode {
 
             //0) Sample minerals -1 is left, 1 Right, 0 Center
             int LeftRightCenter = theSampler.sampleMinerals();
-
+            theSampler.deactivate();
             //1) Land and unlatch from lander
 
             theElevatorClimb.dropDown();        // robot goes up to release the latch
             delay(750);
             theElevatorClimb.climberStop();   //stops the climber motor
+            if (!theHardwarePlatter.climberLimitSwUp.isPressed())
             theElevatorClimb.climbUpAuton();  //robot drops down
-            delay(3500);
+            else    //delay(3500);
             theElevatorClimb.climberStop();   // Stops motor
+            
+           
 
             //2.1) Move the Cube for left
 
@@ -147,6 +159,11 @@ public class AutonDepot extends LinearOpMode {
 
             // 5 ) Unfold the arms into the Crater
 
+            if(!theHardwarePlatter.climberLimitSwDn.isPressed()){
+                theElevatorClimb.climbDownAuton();
+            }else    //delay(3500);
+            theElevatorClimb.climberStop();   // Stops motor
+
             theClawLatch.autoClose();              // close the claw latch to allow arm to rotate
             delay(750);
 
@@ -184,7 +201,7 @@ public class AutonDepot extends LinearOpMode {
             telemetry.addData("timeout", timeout_ms);
             telemetry.addData("Pot_Voltage", theHardwarePlatter.armPotentiometer.getVoltage());
             theArm.display(telemetry);
-            theChassis.isGyroBusy();
+            theSampler.display(telemetry);
             telemetry.update();
             if (theArm.isMoving()) theArm.moveOrHoldPosition();
             sleep(100);

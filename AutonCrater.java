@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -31,8 +32,19 @@ public class AutonCrater extends LinearOpMode {
         telemetry.addData("robot", "initialized");
         telemetry.update();
 
+        theSampler.initVuforia();
+
+        if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
+            theSampler.initTfod();
+        } else {
+            telemetry.addData("Sorry!", "This device is not compatible with TFOD");
+        }
+        theSampler.activate();
+        
         waitForStart();
+        
         int LeftRightCenter = theSampler.sampleMinerals();
+        theSampler.deactivate();
 
         if (opModeIsActive()) {
 
@@ -48,7 +60,7 @@ public class AutonCrater extends LinearOpMode {
             // 2, 3 ) Unfold the arms
             driveAuton(-6.5, 0.5);
             //Drive forward 6.5 inches
-            theWheeliebar.wheeliebar_RB_down();
+            theWheeliebar.down();
             theElevatorClimb.dropDown();         // Reset the climber position     
             delay(2000);                             //Wait 1.0 seconds
 
@@ -112,7 +124,7 @@ public class AutonCrater extends LinearOpMode {
 
 // drive into the crater for the end of the match
 
-            theWheeliebar.wheeliebar_RB_middle();
+            //theWheeliebar.middle();
             driveAuton(-12.0, 0.5);
 
             //Drive backward 22 inches toward the crater
@@ -137,6 +149,7 @@ public class AutonCrater extends LinearOpMode {
             theArm.display(telemetry);
             telemetry.update();
             theArm.moveOrHoldPosition();
+            theWheeliebar.moveOrHoldPosition();
         }
         theArm.stop();
         theChassis.stop();

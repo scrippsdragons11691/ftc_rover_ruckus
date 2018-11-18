@@ -21,6 +21,12 @@ public class ElevatorClimb {
         theHardwarePlatter.elevatorDrive.setPower(0.75);
     }
     
+    void climbDownAuton(){                                //elevator runs down to release the latch
+        if (!theHardwarePlatter.climberLimitSwDn.isPressed())
+            theHardwarePlatter.elevatorDrive.setPower(-0.75);
+        else 
+            theHardwarePlatter.elevatorDrive.setPower(0);
+    }   
     void climbUp() {                                    //elevator runs down
         theHardwarePlatter.elevatorDrive.setPower(1);
     }
@@ -34,9 +40,15 @@ public class ElevatorClimb {
             climberStop(); 
     }
     void climberStop() {                                //stops elevator motor
+    if(theHardwarePlatter.climberLimitSwDn.isPressed())
         theHardwarePlatter.elevatorDrive.setPower(0);
     }
     
+         /*       if (!theHardwarePlatter.climberLimitSwUp.isPressed())
+                  theElevatorClimb.dropDownAuto();
+            if(theHardwarePlatter.climberLimitSwDn.isPressed()){
+                theElevatorClimb.climberStop();
+            } */
     void autonElevatorClimb(double distInches,double speed){
         double elevInches = distInches;
        // double timeoutS;
