@@ -1,21 +1,22 @@
 package org.firstinspires.ftc.teamcode;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import java.util.Set;
 import com.qualcomm.robotcore.hardware.DcMotor;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Wheeliebar {
 
-    static final double WHEELIEBAR_DRIVE_SPEED      = .8;
-    static final double WHEELIEBAR_HOLD_VOLTS       = 0.25;
-    static final double POS_TOLERANCE               = 0.2;
-    static final double DOWN_POSITION_VOLTS         = 2.2;
-    static final double UP_POSITION_VOLTS           = 0.5;
+    static final double WHEELIEBAR_DRIVE_SPEED = 0.0;
+    static final double WHEELIEBAR_HOLD_VOLTS = 0.0;
+    static final double POS_TOLERANCE = 0.2;
+    static final double DOWN_POSITION_VOLTS = 2.0;
+    static final double UP_POSITION_VOLTS = 0.5;
+    static final double MIDDLE_POSITION_VOLTS = 1.25;
 
     HardwarePlatter theHardwarePlatter;
-    private double  driveSpeedSetPoint = 0.0;
+    private double driveSpeedSetPoint = 0.0;
     private boolean is_moving = false;
-    private double  targetPosition;
+    private double targetPosition;
 
     public Wheeliebar(HardwarePlatter hwPlatter) {
         theHardwarePlatter = hwPlatter;
@@ -25,12 +26,12 @@ public class Wheeliebar {
 
         double error = targetPosition - theHardwarePlatter.wheeliebarPot.getVoltage();
 
-        if(Math.abs(error) > POS_TOLERANCE) {
+        if (Math.abs(error) > POS_TOLERANCE) {
             is_moving = true;
-            if(error < 0) {
+            if (error < 0) {
                 driveSpeedSetPoint = -WHEELIEBAR_DRIVE_SPEED; //up
                 driveWheeliebar2();
-            } else if(error > 0) {
+            } else if (error > 0) {
                 driveSpeedSetPoint = WHEELIEBAR_DRIVE_SPEED; //down
                 driveWheeliebar2();
             }
@@ -39,8 +40,8 @@ public class Wheeliebar {
             stop();
         }
     }
-    
-   void up() {
+
+    void up() {
         targetPosition = UP_POSITION_VOLTS;
         gotoPosition();
     }
@@ -50,23 +51,31 @@ public class Wheeliebar {
         gotoPosition();
     }
 
+    void middle() {
+        targetPosition = MIDDLE_POSITION_VOLTS;
+        gotoPosition();
+    }
+
     private void driveWheeliebar() {
         theHardwarePlatter.wheelieBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         theHardwarePlatter.wheelieBar.setPower(driveSpeedSetPoint);
         is_moving = false;
     }
+
     private void driveWheeliebar2() {
         theHardwarePlatter.wheelieBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         theHardwarePlatter.wheelieBar.setPower(driveSpeedSetPoint);
-    }    
-    void move(double speed){
-        driveSpeedSetPoint = Math.pow(speed,3)*0.5;  //was 0.2
+    }
+
+    void move(double speed) {
+        driveSpeedSetPoint = Math.pow(speed, 3) * 0.5;  //was 0.2
         driveWheeliebar();
     }
+
     void stop() {
         theHardwarePlatter.wheelieBar.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         is_moving = false;
-        if( theHardwarePlatter.wheeliebarPot.getVoltage() > UP_POSITION_VOLTS) {
+        if (theHardwarePlatter.wheeliebarPot.getVoltage() > UP_POSITION_VOLTS) {
             theHardwarePlatter.wheelieBar.setPower(WHEELIEBAR_HOLD_VOLTS);
         } else {
             theHardwarePlatter.wheelieBar.setPower(WHEELIEBAR_HOLD_VOLTS);
@@ -74,15 +83,15 @@ public class Wheeliebar {
     }
 
     boolean moveOrHoldPosition() {
-        if(is_moving)
+        if (is_moving)
             gotoPosition();
         else
             stop();
-        return(is_moving);
+        return (is_moving);
     }
-    
+
     boolean isMoving() {
-        return(is_moving);
+        return (is_moving);
     }
 
     void display(Telemetry telemetry) {

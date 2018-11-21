@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
 
 @Autonomous
 public class AutonDepot extends LinearOpMode {
@@ -58,11 +59,10 @@ public class AutonDepot extends LinearOpMode {
             delay(750);
             theElevatorClimb.climberStop();   //stops the climber motor
             if (!theHardwarePlatter.climberLimitSwUp.isPressed())
-            theElevatorClimb.climbUpAuton();  //robot drops down
+                theElevatorClimb.climbUpAuton();  //robot drops down
             else    //delay(3500);
-            theElevatorClimb.climberStop();   // Stops motor
-            
-           
+                theElevatorClimb.climberStop();   // Stops motor
+
 
             //2.1) Move the Cube for left
 
@@ -159,10 +159,10 @@ public class AutonDepot extends LinearOpMode {
 
             // 5 ) Unfold the arms into the Crater
 
-            if(!theHardwarePlatter.climberLimitSwDn.isPressed()){
+            if (!theHardwarePlatter.climberLimitSwDn.isPressed()) {
                 theElevatorClimb.climbDownAuton();
-            }else    //delay(3500);
-            theElevatorClimb.climberStop();   // Stops motor
+            } else    //delay(3500);
+                theElevatorClimb.climberStop();   // Stops motor
 
             theClawLatch.autoClose();              // close the claw latch to allow arm to rotate
             delay(750);

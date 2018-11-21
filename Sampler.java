@@ -60,16 +60,13 @@ public class Sampler {
                         first_index = 1;
                         second_index = 0;
                     }
-                    if (updatedRecognitions.get(first_index).getLabel().equals(LABEL_GOLD_MINERAL))
-                    {
+                    if (updatedRecognitions.get(first_index).getLabel().equals(LABEL_GOLD_MINERAL)) {
                         goldPosition = "left";
                         goldMineralPosition = -1;
-                    }
-                    else if (updatedRecognitions.get(second_index).getLabel().equals(LABEL_GOLD_MINERAL)) {
+                    } else if (updatedRecognitions.get(second_index).getLabel().equals(LABEL_GOLD_MINERAL)) {
                         goldPosition = "center";
                         goldMineralPosition = 0;
-                    }
-                    else {
+                    } else {
                         goldPosition = "right";
                         goldMineralPosition = 1;
                     }
@@ -78,7 +75,7 @@ public class Sampler {
             }
 
         }
-        return(goldMineralPosition);
+        return (goldMineralPosition);
     }
 
 

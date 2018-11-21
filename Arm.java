@@ -1,24 +1,24 @@
 package org.firstinspires.ftc.teamcode;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import java.util.Set;
 import com.qualcomm.robotcore.hardware.DcMotor;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Arm {
 
-    static final double INTAKE_DRIVE_SPEED      = 1.0;
-    static final double ARM_HOLD_VOLTS          = 0.05;
-    static final double POS_TOLERANCE           = 0.05;
-    static final double UNFOLD_POSITION_VOLTS   = 3.3;
-    static final double PICKUP_POSITION_VOLTS   = 3.05;
-    static final double DRIVE_POSITION_VOLTS    = 1.15;
-    static final double RELEASE_POSITION_VOLTS  = 0.80;
-    static final double MIDDLE_POSITION_VOLTS  = 2.50;
+    static final double INTAKE_DRIVE_SPEED = 1.0;
+    static final double ARM_HOLD_VOLTS = 0.05;
+    static final double POS_TOLERANCE = 0.05;
+    static final double UNFOLD_POSITION_VOLTS = 3.3;
+    static final double PICKUP_POSITION_VOLTS = 3.05;
+    static final double DRIVE_POSITION_VOLTS = 1.15;
+    static final double RELEASE_POSITION_VOLTS = 0.80;
+    static final double MIDDLE_POSITION_VOLTS = 2.50;
 
     HardwarePlatter theHardwarePlatter;
-    private double  driveSpeedSetPoint = 0.0;
+    private double driveSpeedSetPoint = 0.0;
     private boolean is_moving = false;
-    private double  targetPosition;
+    private double targetPosition;
 
     public Arm(HardwarePlatter hwPlatter) {
         theHardwarePlatter = hwPlatter;
@@ -28,13 +28,13 @@ public class Arm {
 
         double error = targetPosition - theHardwarePlatter.armPotentiometer.getVoltage();
 
-        if(Math.abs(error) > POS_TOLERANCE) {
+        if (Math.abs(error) > POS_TOLERANCE) {
             is_moving = true;
-            if(error < 0) {
-                driveSpeedSetPoint =INTAKE_DRIVE_SPEED; //up
+            if (error < 0) {
+                driveSpeedSetPoint = INTAKE_DRIVE_SPEED; //up
                 driveArm2();
-            } else if(error > 0) {
-                driveSpeedSetPoint = -INTAKE_DRIVE_SPEED*0.5; //down
+            } else if (error > 0) {
+                driveSpeedSetPoint = -INTAKE_DRIVE_SPEED * 0.5; //down
                 driveArm2();
             }
         } else {
@@ -42,7 +42,7 @@ public class Arm {
             stop();
         }
     }
-    
+
     private void controlPosition(double deltaTime) {
 /*        static final double Kp = 0.02, Ki = 0.001, Kd = 0;
         static double previousError = 0;
@@ -77,8 +77,8 @@ public class Arm {
         targetPosition = RELEASE_POSITION_VOLTS;
         gotoPosition();
     }
-    
-        void middle() {
+
+    void middle() {
         targetPosition = MIDDLE_POSITION_VOLTS;
         gotoPosition();
     }
@@ -94,23 +94,27 @@ public class Arm {
         driveSpeedSetPoint = intakeDriveSpeed;
         driveArm();
     }
+
     private void driveArm() {
         theHardwarePlatter.armDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         theHardwarePlatter.armDrive.setPower(driveSpeedSetPoint);
         is_moving = false;
     }
+
     private void driveArm2() {
         theHardwarePlatter.armDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         theHardwarePlatter.armDrive.setPower(driveSpeedSetPoint);
-    }    
-    void move(double speed){
-        driveSpeedSetPoint = Math.pow(speed,3)*0.5;  //was 0.2
+    }
+
+    void move(double speed) {
+        driveSpeedSetPoint = Math.pow(speed, 3) * 0.5;  //was 0.2
         driveArm();
     }
+
     void stop() {
         theHardwarePlatter.armDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         is_moving = false;
-        if( theHardwarePlatter.armPotentiometer.getVoltage() > DRIVE_POSITION_VOLTS) {
+        if (theHardwarePlatter.armPotentiometer.getVoltage() > DRIVE_POSITION_VOLTS) {
             theHardwarePlatter.armDrive.setPower(ARM_HOLD_VOLTS);
         } else {
             theHardwarePlatter.armDrive.setPower(-ARM_HOLD_VOLTS);
@@ -118,15 +122,15 @@ public class Arm {
     }
 
     boolean moveOrHoldPosition() {
-        if(is_moving)
+        if (is_moving)
             gotoPosition();
         else
             stop();
-        return(is_moving);
+        return (is_moving);
     }
-    
+
     boolean isMoving() {
-        return(is_moving);
+        return (is_moving);
     }
 
     void display(Telemetry telemetry) {
