@@ -4,8 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+
 @Autonomous
-public class AutonCrater extends LinearOpMode {
+public class AutonCrater_Marker extends LinearOpMode {
 
     ChassisAuton theChassis;
     HardwarePlatter theHardwarePlatter;
@@ -31,11 +33,21 @@ public class AutonCrater extends LinearOpMode {
         telemetry.addData("robot", "initialized");
         telemetry.update();
 
+        theSampler.initVuforia();
+
+
         waitForStart();
+
         int LeftRightCenter = theSampler.sampleMinerals();
+        theSampler.deactivate();
 
         if (opModeIsActive()) {
-
+            if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
+                theSampler.initTfod();
+            } else {
+                telemetry.addData("Sorry!", "This device is not compatible with TFOD");
+            }
+            theSampler.activate();
             //1) Land and unlatch from lander
  /*           theClawLatch.closeAuton();
             theElevatorClimb.dropDown();        // robot goes up to release the latch
@@ -48,9 +60,10 @@ public class AutonCrater extends LinearOpMode {
             // 2, 3 ) Unfold the arms
             driveAuton(-6.5, 0.5);
             //Drive forward 6.5 inches
-            theWheeliebar.wheeliebar_RB_down();
+            theWheeliebar.down();
             theElevatorClimb.dropDown();         // Reset the climber position     
             delay(2000);                             //Wait 1.0 seconds
+
 
             theElevatorClimb.climberStop();
             drive();                         //Set the arm at a 90 degree angle (drive position)
@@ -112,7 +125,7 @@ public class AutonCrater extends LinearOpMode {
 
 // drive into the crater for the end of the match
 
-            theWheeliebar.wheeliebar_RB_middle();
+            theWheeliebar.middle();
             driveAuton(-12.0, 0.5);
 
             //Drive backward 22 inches toward the crater
@@ -137,6 +150,7 @@ public class AutonCrater extends LinearOpMode {
             theArm.display(telemetry);
             telemetry.update();
             theArm.moveOrHoldPosition();
+            theWheeliebar.moveOrHoldPosition();
         }
         theArm.stop();
         theChassis.stop();
@@ -175,6 +189,6 @@ public class AutonCrater extends LinearOpMode {
 
     void rotateAuton(double distance, double speed) {
         theChassis.rotateAuton(distance, speed);
-        while(opModeIsActive() && theChassis.isDriveBusy());
+        while (opModeIsActive() && theChassis.isDriveBusy()) ;
     }
 }
