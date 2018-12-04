@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
 
 @Autonomous
 public class AutonCrater_NoMarker extends LinearOpMode {
@@ -36,7 +35,7 @@ public class AutonCrater_NoMarker extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
-        //int LeftRightCenter = 1;
+        //int LeftRightCenter = -1;
 
         if (opModeIsActive()) {
 
@@ -53,35 +52,35 @@ public class AutonCrater_NoMarker extends LinearOpMode {
             theSampler.display(telemetry);
             telemetry.update();
 
-            delay(5000);
+            delay(3500);
 
             int LeftRightCenter = theSampler.sampleMinerals();
             theSampler.deactivate();
-
-            theWheeliebar.up();
-
-            delay(500);
 
             //1) Land and unlatch from lander
             theElevatorClimb.dropDown();        // robot goes up to release the latch
             delay(750);
 
             theElevatorClimb.climberStop();   //stops the climber motor
+            //wheeliebarDown();
+            theWheeliebar.down();
+            delay(1000);
 
             if (!theHardwarePlatter.climberLimitSwUp.isPressed())
                 theElevatorClimb.climbUp();  //robot drops down
             else
                 theElevatorClimb.climberStop();   // Stops motor
+            delay(500);
 
             theClawLatch.autoOpen();                //Reset climber Hook Position
             delay(1000);
 
-            theWheeliebar.down();
-            delay(500);
 
             //2.1) Move the Cube for left
 
             if (LeftRightCenter == -1) {
+//              theWheeliebar.down();
+//              delay (500);
                 theChassis.rotateAuton(-2.75, 0.3);         // Rotate toward the mineral
                 delay(100);
                 theChassis.driveAuton(-12.0, 0.5);       // Drive backward 20 inches toward the crater
@@ -89,13 +88,13 @@ public class AutonCrater_NoMarker extends LinearOpMode {
                 theChassis.rotateAuton(3.5, 0.3);          // Rotate to the crater
                 delay(100);
                 theChassis.driveAuton(-2.0, 0.5);       // Drive backward 20 inches toward the crater
-                delay(100);
-
-
+                delay(200);
             }
             //2.2)  Move the Cube for Center
 
             else if (LeftRightCenter == 0) {
+                //             theWheeliebar.down();
+                //             delay (500);
 
                 theChassis.driveAuton(-12.0, 0.5);       // Drive backward 20 inches toward the crater
                 delay(200);
@@ -105,15 +104,16 @@ public class AutonCrater_NoMarker extends LinearOpMode {
             //2.1) Move the Cube for right
 
             else if (LeftRightCenter == 1) {
-
+                //             theWheeliebar.down();
+                //             delay (500);
                 theChassis.rotateAuton(2.5, 0.4);         // Rotate toward the mineral
                 delay(100);
                 theChassis.driveAuton(-12, 0.3);       // Drive backward 20 inches toward the crater
                 delay(100);
-                theChassis.rotateAuton(-3.25, 0.4);         // Rotate toward the mineral
+                theChassis.rotateAuton(-2.75, 0.4);         // Rotate toward the mineral
                 delay(100);
                 theChassis.driveAuton(-2.0, 0.5);       // Drive backward 20 inches toward the crater
-                delay(100);
+                delay(200);
             }
 
             if (!theHardwarePlatter.climberLimitSwDn.isPressed()) {
@@ -127,11 +127,16 @@ public class AutonCrater_NoMarker extends LinearOpMode {
             delay(100);                             //Wait 2 second
 
             theArm.unfold();                        //set the arm to unfold position
-            theClawLatch.autoOpen();                //Reset climber Hook Position
-            delay(100);                            //wait for 1.5 seconds
+            delay(3000);                            //wait for 2.0 seconds
 
-            theArm.unfold();                        //set the arm to unfold position into the crater
-            delay(100);                            //wait 1.5 seconds
+            theClawLatch.autoOpen();                //push over the arm if it does not go on it's own
+            delay(1000);                            //wait for 1.0 seconds
+
+            theIntake.openDumpServo();              //open the dump servo
+            delay(100);                            //wait 1 seconds
+
+            theArm.unfold();                        //set the arm to unfold position
+            delay(2000);
 
             theIntake.openDumpServo();              //open the dump servo
             delay(100);                            //wait 1 seconds
@@ -151,17 +156,20 @@ public class AutonCrater_NoMarker extends LinearOpMode {
         while (opModeIsActive() && (runtime.time() < timeout_ms / 1000.0)) {
             //sleep(timeout_ms);
             telemetry.addData("Encoders_run", theHardwarePlatter.elevatorDrive.getCurrentPosition());
+            telemetry.addData("Distance from wall", theChassis.getDistanceFromWall());
             telemetry.addData("time", runtime.time());
             telemetry.addData("timeout", timeout_ms);
             telemetry.addData("Pot_Voltage", theHardwarePlatter.armPotentiometer.getVoltage());
             theArm.display(telemetry);
+            theSampler.display(telemetry);
             telemetry.update();
-            theArm.moveOrHoldPosition();
+            if (theArm.isMoving()) theArm.moveOrHoldPosition();
             theWheeliebar.moveOrHoldPosition();
+            sleep(100);
         }
         theArm.stop();
-        theChassis.stop();
     }
+
 
     void unfold() {
         theArm.unfold();
@@ -197,5 +205,13 @@ public class AutonCrater_NoMarker extends LinearOpMode {
     void rotateAuton(double distance, double speed) {
         theChassis.rotateAuton(distance, speed);
         while (opModeIsActive() && theChassis.isDriveBusy()) ;
+
     }
+
+    void wheeliebarDown() {
+        theWheeliebar.down();
+        while (opModeIsActive() && theWheeliebar.moveOrHoldPosition()) ;
+    }
+
 }
+

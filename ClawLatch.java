@@ -10,7 +10,7 @@ public class ClawLatch {
 
     ClawLatch(HardwarePlatter hwPlatter) {
         theHardwarePlatter = hwPlatter;
-        theHardwarePlatter.clawServo.setPosition(0);
+        theHardwarePlatter.clawServo.setPosition(1);
     }
 
     void open() {

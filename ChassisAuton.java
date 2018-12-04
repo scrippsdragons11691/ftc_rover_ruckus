@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class ChassisAuton {
     //Rev Hex HD Motor 2240 counts per rotation
@@ -12,12 +10,8 @@ public class ChassisAuton {
     static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double DRIVE_SPEED = 0.6;
-    static final double TURN_SPEED = 0.5;
     HardwarePlatter theHardwarePlatter;
-    double powerSetpoint = 0.1;
-    double error;
-    private ElapsedTime runtime = new ElapsedTime();
+
 
     public ChassisAuton(HardwarePlatter hwPlatter) {
         theHardwarePlatter = hwPlatter;
@@ -76,6 +70,12 @@ public class ChassisAuton {
         theHardwarePlatter.rightFrontDrive.setPower(Math.abs(speed));
         theHardwarePlatter.leftBackDrive.setPower(Math.abs(speed));
         theHardwarePlatter.rightBackDrive.setPower(Math.abs(speed));
+
+        while (theHardwarePlatter.leftBackDrive.isBusy() && theHardwarePlatter.rightBackDrive.isBusy()) {
+            //telemetry.addLine("Encoders_run");
+            //telemetry.update();
+        }
+
     }
 
     void rotateAuton(double distanceInches, double speed) {

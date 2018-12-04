@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
 
 @Autonomous
 public class AutonDepot extends LinearOpMode {
@@ -65,7 +64,11 @@ public class AutonDepot extends LinearOpMode {
             delay(750);
             theElevatorClimb.climberStop();   //stops the climber motor
 
-            elevatorClimbUp();
+            //elevatorClimbUp();
+            if (!theHardwarePlatter.climberLimitSwUp.isPressed())
+                theElevatorClimb.climbUpAuton();  //robot drops down
+            else theElevatorClimb.climberStop();   // Stops motor
+            delay(500);
 
             theClawLatch.autoOpen();                //Reset climber Hook Position
             delay(500);
@@ -77,9 +80,11 @@ public class AutonDepot extends LinearOpMode {
             //int LeftRightCenter = 1;
 
             if (LeftRightCenter == -1) {
-                rotateAuton(-2.75, 0.5);         // Rotate toward the mineral
+                theChassis.rotateAuton(-2.75, 0.5);         // Rotate toward the mineral
+                delay(750);
                 driveAuton(-20.0, 0.5);       // Drive backward 20 inches toward the crater
-                rotateAuton(6, 0.5);          // Rotate to the crater
+                theChassis.rotateAuton(6, 0.5);          // Rotate to the crater
+                delay(750);
 
                 //3.1) Drop Marker after left
 
@@ -93,7 +98,8 @@ public class AutonDepot extends LinearOpMode {
                 driveAuton(33, 0.8);        // Drive forward 35 inches
                 theMarkerServo.markerServo_up();      // raise marker
                 delay(1500);
-                rotateAuton(-11.5, 0.5);         // Rotate toward the mineral
+                theChassis.rotateAuton(-11.5, 0.5);         // Rotate toward the mineral
+                delay(1000);
                 driveAuton(-8, 0.8);
             }
 
@@ -103,7 +109,8 @@ public class AutonDepot extends LinearOpMode {
 
                 driveAuton(-26.0, 0.5);       // Drive backward 20 inches toward the crater
 
-                rotateAuton(4.75, 0.5);
+                theChassis.rotateAuton(4.75, 0.5);
+                delay(200);
                 driveAuton(-5, 0.5);       // Drive backward 20 inches toward the crater
 
                 //3.1) Drop Marker after center
@@ -114,10 +121,12 @@ public class AutonDepot extends LinearOpMode {
                 //4) Drive to Crater after center
                 theMarkerServo.markerServo_up();      // raise marker
                 driveAuton(18, 0.4);        // Drive forward 35 inches
-                rotateAuton(-1.5, 0.5);         // Rotate toward the mineral
+                theChassis.rotateAuton(-1.5, 0.5);         // Rotate toward the mineral
+                delay(200);
                 driveAuton(15, 0.8);        // Drive forward 35 inches
                 theMarkerServo.markerServo_up();      // raise marker
-                rotateAuton(-12, 0.5);         // Rotate toward the mineral
+                theChassis.rotateAuton(-12, 0.5);         // Rotate toward the mineral
+                delay(200);
                 driveAuton(-8, 0.8);
             }
 
@@ -128,17 +137,19 @@ public class AutonDepot extends LinearOpMode {
                 theChassis.rotateAuton(2.5, 0.4);         // Rotate toward the mineral
                 delay(100);
                 driveAuton(-20, 0.3);       // Drive backward 20 inches toward the crater
-                wheeliebarDown();
+                theWheeliebar.down();
+                delay(1000);
 
                 //3.1) Drop Marker after right
                 theChassis.rotateAuton(-5.25, 0.4);          // Rotate to the crater
                 delay(100);
-                wheeliebarUp();
+                theWheeliebar.up();
                 delay(100);
                 driveAuton(-12, 0.3);       // Drive backward 20 inches toward the crater
                 driveToWall(29);         // Rotate toward the mineral
                 delay(100);
-                rotateAuton(6.5, 0.4);          // Rotate to the crater
+                theChassis.rotateAuton(6.5, 0.4);          // Rotate to the crater
+                delay(100);
                 theMarkerServo.markerServo_down();      // Drop marker
                 delay(500);
 
@@ -146,34 +157,36 @@ public class AutonDepot extends LinearOpMode {
 
                 theMarkerServo.markerServo_up();      // raise marker
                 driveAuton(18, 0.4);        // Drive forward 35 inches
-                rotateAuton(-1.0, 0.4);         // Rotate toward the mineral
+                theChassis.rotateAuton(-1.0, 0.4);         // Rotate toward the mineral
+                delay(200);
                 driveAuton(14, 0.8);        // Drive forward 35 inches
                 theMarkerServo.markerServo_up();      // raise marker
-                rotateAuton(-12, 0.4);         // Rotate toward the mineral
+                theChassis.rotateAuton(-12, 0.4);         // Rotate toward the mineral
+                delay(200);
                 driveAuton(-8, 0.8);
             }
             // 5 ) Unfold the arms into the Crater
 
             if (!theHardwarePlatter.climberLimitSwDn.isPressed()) {
-                theElevatorClimb.dropDown();
+                theElevatorClimb.climbDownAuton();
             } else theElevatorClimb.climberStop();   // Stops motor
 
             theClawLatch.autoClose();              // close the claw latch to allow arm to rotate
             delay(750);
 
-            theArm.drive();                         //Set the arm at a 90 degree angle (drive position)
-            delay(100);                             //Wait 2 second
-
             theArm.unfold();                        //set the arm to unfold position
             theClawLatch.autoOpen();                //Reset climber Hook Position
-            delay(100);                            //wait for 1.5 seconds
+            delay(3000);                            //wait for 1.5 seconds
 
+            theIntake.openDumpServo();              //open the dump servo
+            delay(1000); 
+/*            
             theArm.unfold();                        //set the arm to unfold position into the crater
-            delay(100);                            //wait 1.5 seconds
+            delay(2000);                            //wait 1.5 seconds
 
             theIntake.openDumpServo();              //open the dump servo
             delay(1000);                            //wait 1 seconds
-
+*/
             theIntake.closeDumpServo();
 
             theArm.middle();
@@ -247,18 +260,13 @@ public class AutonDepot extends LinearOpMode {
     }
 
     void elevatorClimbUp() {
-        theElevatorClimb.climbUp();  //robot drops down
+        theElevatorClimb.climbUpAuton();  //robot drops down
         while (opModeIsActive() && !theHardwarePlatter.climberLimitSwUp.isPressed()) ;
         theElevatorClimb.climberStop();   // Stops motor
     }
 
     void wheeliebarDown() {
         theWheeliebar.down();
-        while (opModeIsActive() && theWheeliebar.moveOrHoldPosition()) ;
-    }
-
-    void wheeliebarUp() {
-        theWheeliebar.up();
         while (opModeIsActive() && theWheeliebar.moveOrHoldPosition()) ;
     }
 }
